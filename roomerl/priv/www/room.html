@@ -1,0 +1,48 @@
+<html>
+	<head>
+	  <title>qsim:roomerl:room</title>
+		<script type="text/javascript">
+			function addStatus(text){
+				var date = new Date();
+				document.getElementById('status').innerHTML = document.getElementById('status').innerHTML + date + ": " + text + "<br>";				
+			}
+			var ws;
+			function connect(){
+				if ("WebSocket" in window) {
+					// browser supports websockets
+					ws = new WebSocket("ws://localhost:8080/rooms/123");
+					ws.onopen = function() {
+						// websocket is connected
+						addStatus("websocket connected!");
+						// send hello data to server.
+						ws.send("hello server!");
+						addStatus("sent message to server: 'hello server'!");
+					};
+					ws.onmessage = function (evt) {
+						var receivedMsg = evt.data;
+						addStatus("server sent the following: '" + receivedMsg + "'");
+					};
+					ws.onclose = function() {
+						// websocket was closed
+						addStatus("websocket was closed");
+					};
+				} else {
+					// browser does not support websockets
+					addStatus("sorry, your browser does not support websockets.");
+				}
+			}
+			function send(msg){
+			  ws.send(msg);
+				addStatus("sent message to server: '"+ msg +"'!");
+			}
+		</script>
+	</head>
+	<body>
+	  <form method="POST">
+	    <input type="submit" value="connect" onclick="connect(); return false;"/>
+	    <input type="button" value="send" onclick="send(message.value); return false;"/>
+	    <input type="text" name="message"/>
+	  </form>
+		<div id="status"></div>
+	</body>
+</html>
