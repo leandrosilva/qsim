@@ -2,7 +2,7 @@ APP_NAME := roomerl
 
 all: compile
 	
-compile: clean
+compile: clear
 	cp src/$(APP_NAME).app ebin/
 	erlc -pa ebin/ -o ebin/ src/*.erl
 	
@@ -18,6 +18,6 @@ run_dev:
 run_test: compile_test
 	erl -noshell -pa ebin/ deps/**/ebin/ -s $(APP_NAME) -run $(MODULE) test -run init stop -config config/test
 
-clean:
+clear:
 	rm -f ebin/*.beam
 	rm -f erl_crash.dump
