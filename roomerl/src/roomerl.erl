@@ -1,7 +1,7 @@
 %% @author Leandro Silva <leandrodoze@gmail.com>
 %% @copyright 2011 Leandro Silva.
 
-%% @doc Startup for roomerl application.
+%% @doc Startup module for the roomerl application.
 
 -module(roomerl).
 -author('Leandro Silva <leandrodoze@gmail.com>').

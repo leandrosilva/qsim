@@ -8,6 +8,7 @@
 -module(roomerl_deps).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
+% public api
 -export([ensure/0, ensure/1]).
 -export([get_base_dir/0, get_base_dir/1]).
 -export([local_path/1, local_path/2]).

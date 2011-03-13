@@ -1,6 +1,8 @@
 %% @author Leandro Silva <leandrodoze@gmail.com>
 %% @copyright 2011 Leandro Silva.
 
+%% @doc The web server module of the roomerl application that handles HTTP and WebSocket.
+
 -module(roomerl_web).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
