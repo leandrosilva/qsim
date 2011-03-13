@@ -29,6 +29,9 @@ upgrade() ->
 
   Old = sets:from_list([Name || {Name, _, _, _} <- supervisor:which_children(?MODULE)]),
   New = sets:from_list([Name || {Name, _, _, _, _, _} <- Specs]),
+
+  % kill children processes that doesn't exists anymore
+  % I mean, they exist in the Old spec but no longer in the New spec
   Kill = sets:subtract(Old, New),
 
   sets:fold(fun (Id, ok) ->
