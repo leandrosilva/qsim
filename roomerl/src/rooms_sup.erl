@@ -43,5 +43,4 @@ init([]) ->
   RoomsConfig = [],
   Rooms = {rooms, {rooms, start_link, [RoomsConfig]}, permanent, 5000, worker, dynamic},
 
-  Processes = [Rooms],
-  {ok, {{one_for_one, 10, 10}, Processes}}.
+  {ok, {{one_for_one, 10, 10}, [Rooms]}}.
