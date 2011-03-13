@@ -42,6 +42,7 @@ upgrade() ->
 init([]) ->
   WebConfig = roomerl:get_web_config(),
   Web = {roomerl_web, {roomerl_web, start_link, [WebConfig]}, permanent, 5000, worker, dynamic},
+  
+  RoomsSup = {rooms_sup, {rooms_sup, start_link, []}, permanent, 5000, worker, dynamic},
 
-  Processes = [Web],
-  {ok, {{one_for_one, 10, 10}, Processes}}.
+  {ok, {{one_for_one, 10, 10}, [Web, RoomsSup]}}.
