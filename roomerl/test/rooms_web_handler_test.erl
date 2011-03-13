@@ -21,12 +21,18 @@ describe_test_() ->
         [
           {"should accept GET on / to show the home page",
             fun should_accept_get_to_show_the_home_page/0},
-              
+
           {"should accept GET on /rooms to show the rooms page",
             fun should_accept_get_to_show_the_rooms_page/0},
-              
+
           {"should accept GET on /rooms/{RoomId} to show the profile page of a room",
             fun should_accept_get_to_show_the_profile_page_of_a_room/0},
+
+          {"should accept GET on /rooms/{RoomId}/open to open a room",
+            fun should_accept_get_to_open_a_room/0},
+
+            {"should accept GET on /rooms/{RoomId}/close to close a room",
+              fun should_accept_get_to_close_a_room/0},
 
           {"should accept GET on /rooms/{RoomId}/enter to enter in a room",
             fun should_accept_get_to_enter_in_a_room/0},
@@ -89,6 +95,24 @@ should_accept_get_to_show_the_profile_page_of_a_room() ->
                       {"content-length", "26"},
                       {"content-type", "text/plain"}],
                      "This is the 123 room page."}}, HttpResponse).
+
+should_accept_get_to_open_a_room() ->
+  HttpResponse = http_get("/rooms/123/open"),
+
+  ?assertMatch({ok, {{"HTTP/1.1", 200, "OK"},
+                     [{"connection", "Keep-Alive"},
+                      {"content-length", "17"},
+                      {"content-type", "text/plain"}],
+                     "Opening room 123."}}, HttpResponse).
+
+should_accept_get_to_close_a_room() ->
+  HttpResponse = http_get("/rooms/123/close"),
+
+  ?assertMatch({ok, {{"HTTP/1.1", 200, "OK"},
+                     [{"connection", "Keep-Alive"},
+                      {"content-length", "17"},
+                      {"content-type", "text/plain"}],
+                     "Closing room 123."}}, HttpResponse).
   
 should_accept_get_to_enter_in_a_room() ->
   HttpResponse = http_get("/rooms/123/enter"),
