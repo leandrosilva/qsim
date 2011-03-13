@@ -11,7 +11,7 @@
 % admin api
 -export([start_link/1, stop/0]).
 % public api
--export([open_room/1, close_room/1, get_open_rooms/0]).
+-export([open_room/1, close_room/1, get_open_rooms/0, close_all_rooms/0]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
@@ -38,17 +38,22 @@ stop() ->
 %% @spec open_room(RoomId) -> [Room]
 %% @doc Opens a room given.
 open_room(RoomId) ->
-  gen_server:call(?MODULE, {open_room, RoomId}).
+  gen_server:call(?MODULE, {do, open_room, RoomId}).
 
 %% @spec close_room(RoomId) -> [Room]
 %% @doc Closes a room given.
 close_room(RoomId) ->
-  gen_server:call(?MODULE, {close_room, RoomId}).
+  gen_server:call(?MODULE, {do, close_room, RoomId}).
 
 %% @spec get_open_rooms() -> [Room]
-%% @doc Currently open rooms.
+%% @doc List currently open rooms.
 get_open_rooms() ->
   gen_server:call(?MODULE, {get, open_rooms}).
+
+%% @spec close_all_rooms() -> ok
+%% @doc Close all open rooms.
+close_all_rooms() ->
+  gen_server:call(?MODULE, {do, close_all_rooms}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
@@ -68,14 +73,14 @@ init(_Options) ->
 %% @doc Handling call messages.
 
 % opens a room given
-handle_call({open_room, RoomId}, _From, State) ->
-  OpenRooms = [RoomId | State#state.rooms],
+handle_call({do, open_room, RoomId}, _From, State) ->
+  OpenRooms = lists:reverse([RoomId | lists:reverse(State#state.rooms)]),
   NewState = State#state{rooms = OpenRooms},
   
   {reply, OpenRooms, NewState};
 
 % opens a room given
-handle_call({close_room, RoomId}, _From, State) ->
+handle_call({do, close_room, RoomId}, _From, State) ->
   OpenRooms = lists:delete(RoomId, State#state.rooms),
   NewState = State#state{rooms = OpenRooms},
   
@@ -84,6 +89,12 @@ handle_call({close_room, RoomId}, _From, State) ->
 % return currently open rooms
 handle_call({get, open_rooms}, _From, State) ->
   {reply, State#state.rooms, State};
+
+% return currently open rooms
+handle_call({do, close_all_rooms}, _From, State) ->
+  NewState = State#state{rooms = []},
+
+  {reply, [], NewState};
 
 % handle_call generic fallback
 handle_call(_Request, _From, State) ->
