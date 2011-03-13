@@ -6,7 +6,9 @@
 -module(roomerl).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
+% admin api
 -export([start/0, stop/0, upgrade/0]).
+% public api
 -export([get_basedir/0, get_web_config/0]).
 
 %%

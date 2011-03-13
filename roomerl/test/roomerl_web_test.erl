@@ -18,6 +18,21 @@ describe_roomerl_test_() ->
       {"before all tests",
         {setup, fun before_all/0, []}},
         
+      {"having customizable configuration parameters",
+        [
+          {"should have get_host() function",
+           fun should_have_get_host_function/0},
+             
+          {"should have get_port() function",
+           fun should_have_get_port_function/0},
+
+          {"should have get_backlog() function",
+           fun should_have_get_backlog_function/0},
+
+          {"should have get_docroot() function",
+           fun should_have_get_docroot_function/0}
+        ]},
+      
       {"when in HTTP mode",
         [
           {"should accept GET on / to show the home page",
@@ -57,6 +72,22 @@ before_all() ->
 after_all() ->
   application:stop(inets),
   ok.
+
+%%
+%% Scenary: having customizable configuration parameters ------------------------------------------
+%%
+
+should_have_get_host_function() ->
+  ?assertMatch("127.0.0.1", roomerl_web:get_host()).
+   
+should_have_get_port_function() ->
+  ?assertMatch(8008, roomerl_web:get_port()).
+
+should_have_get_backlog_function() ->
+  ?assertMatch(111, roomerl_web:get_backlog()).
+  
+should_have_get_docroot_function() ->
+  ?assertMatch("priv/www", roomerl_web:get_docroot()).
 
 %%
 %% Scenary: when in HTTP mode ---------------------------------------------------------------------
