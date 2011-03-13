@@ -9,10 +9,10 @@
 -include_lib("eunit/include/eunit.hrl").
 
 %%
-%% Describing roomerl_web module ------------------------------------------------------------------
+%% Describing rooms_web_handler module ------------------------------------------------------------
 %%
-describe_roomerl_test_() ->
-  {"roomerl",
+describe_test_() ->
+  {"rooms_web_handler",
     [
       {"before all tests",
         {setup, fun before_all/0, []}},
@@ -28,7 +28,7 @@ describe_roomerl_test_() ->
           {"should accept GET on /rooms/{RoomId} to show the profile page of a room",
             fun should_accept_get_to_show_the_profile_page_of_a_room/0},
 
-          {"should accept GET on /rooms/{RoomId}/getin to enter in a room",
+          {"should accept GET on /rooms/{RoomId}/enter to enter in a room",
             fun should_accept_get_to_enter_in_a_room/0},
 
           {"should accept GET on /rooms/{RoomId}/users to show the users page of a room",
