@@ -9,7 +9,9 @@
     roomerl_app,
     roomerl_sup,
     roomerl_web,
-    roomerl_deps
+    roomerl_deps,
+    rooms_sup,
+    supervisor_utility
   ]},
   {registered, []},
   {mod, {roomerl_app, []}},

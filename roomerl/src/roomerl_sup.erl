@@ -23,25 +23,9 @@ start_link() ->
   supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 %% @spec upgrade() -> ok
-%% @doc Add processes if necessary.
+%% @doc Remove and add processes if necessary.
 upgrade() ->
-  {ok, {_, Specs}} = init([]),
-
-  Old = sets:from_list([Name || {Name, _, _, _} <- supervisor:which_children(?MODULE)]),
-  New = sets:from_list([Name || {Name, _, _, _, _, _} <- Specs]),
-
-  % kill children processes that doesn't exists anymore
-  % I mean, they exist in the Old spec but no longer in the New spec
-  Kill = sets:subtract(Old, New),
-
-  sets:fold(fun (Id, ok) ->
-              supervisor:terminate_child(?MODULE, Id),
-              supervisor:delete_child(?MODULE, Id),
-              ok
-            end, ok, Kill),
-
-  [supervisor:start_child(?MODULE, Spec) || Spec <- Specs],
-  ok.
+  supervisor_utility:upgrade(?MODULE).
 
 %%
 %% Supervisor Callback ----------------------------------------------------------------------------

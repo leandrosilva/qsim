@@ -49,22 +49,22 @@ stop() ->
 %% @spec get_host() -> string()
 %% @doc Host property from configuration properties.
 get_host() ->
-  gen_server:call(?MODULE, get_host).
+  gen_server:call(?MODULE, {get, host}).
 
 %% @spec get_port() -> int()
 %% @doc Port property from configuration properties.
 get_port() ->
-  gen_server:call(?MODULE, get_port).
+  gen_server:call(?MODULE, {get, port}).
 
 %% @spec get_backlog() -> int()
 %% @doc Backlog property from configuration properties.
 get_backlog() ->
-  gen_server:call(?MODULE, get_backlog).
+  gen_server:call(?MODULE, {get, backlog}).
 
 %% @spec get_docroot() -> string()
 %% @doc DocRoot property from configuration properties.
 get_docroot() ->
-  gen_server:call(?MODULE, get_docroot).
+  gen_server:call(?MODULE, {get, docroot}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
@@ -94,19 +94,19 @@ init(WebConfig) ->
 %% @doc Handling call messages.
 
 % return host property
-handle_call(get_host, _From, State) ->
+handle_call({get, host}, _From, State) ->
   {reply, State#state.host, State};
 
 % return port property
-handle_call(get_port, _From, State) ->
+handle_call({get, port}, _From, State) ->
   {reply, State#state.port, State};
 
 % return backlog property
-handle_call(get_backlog, _From, State) ->
+handle_call({get, backlog}, _From, State) ->
   {reply, State#state.backlog, State};
 
 % return docroot property
-handle_call(get_docroot, _From, State) ->
+handle_call({get, docroot}, _From, State) ->
   {reply, State#state.docroot, State};
 
 % handle_call generic fallback
@@ -199,18 +199,18 @@ handle(_, _, Req) ->
 handle_websocket(["rooms", RoomId], Ws) ->
   receive
     {browser, Data} ->
-      io:format("[websocket_handler = ~w, RoomId = ~p] received ~p~n", [self(), RoomId, Data]),
+      % io:format("[websocket_handler = ~w, RoomId = ~p] received ~p~n", [self(), RoomId, Data]),
 
       Ws:send(["received '", Data, "'"]),
       handle_websocket(["rooms", RoomId], Ws);
     closed ->
-      io:format("[websocket_handler = ~w, RoomId = ~p] The WebSocket was CLOSED!~n", [self(), RoomId]),
+      % io:format("[websocket_handler = ~w, RoomId = ~p] The WebSocket was CLOSED!~n", [self(), RoomId]),
 
       closed;
     _Ignore ->
       handle_websocket(["rooms", RoomId], Ws)
   after 5000 ->
-    io:format("[websocket_handler = ~p, RoomId = ~p] pushing~n", [self(), RoomId]),
+    % io:format("[websocket_handler = ~p, RoomId = ~p] pushing~n", [self(), RoomId]),
 
     Ws:send("pushing!"),
     handle_websocket(["rooms", RoomId], Ws)
