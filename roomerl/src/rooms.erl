@@ -11,7 +11,7 @@
 % admin api
 -export([start_link/1, stop/0]).
 % public api
--export([open_room/1, close_room/1, get_open_rooms/0, close_all_rooms/0]).
+-export([open_room/1, close_room/1, get_open_rooms/0, is_open_room/1, close_all_rooms/0]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
@@ -49,6 +49,11 @@ close_room(RoomId) ->
 %% @doc List currently open rooms.
 get_open_rooms() ->
   gen_server:call(?MODULE, {get, open_rooms}).
+
+%% @spec is_open_room(RoomId) -> yes | no
+%% @doc Is room open?
+is_open_room(RoomId) ->
+  gen_server:call(?MODULE, {get, is_open_room, RoomId}).
 
 %% @spec close_all_rooms() -> ok
 %% @doc Close all open rooms.
@@ -90,7 +95,18 @@ handle_call({do, close_room, RoomId}, _From, State) ->
 handle_call({get, open_rooms}, _From, State) ->
   {reply, State#state.rooms, State};
 
-% return currently open rooms
+% return whether a room is open
+handle_call({get, is_open_room, RoomId}, _From, State) ->
+  OpenRooms = State#state.rooms,
+
+  case lists:member(RoomId, OpenRooms) of
+    true -> Found = yes;
+    false -> Found = no
+  end,
+
+  {reply, Found, State};
+
+% close all open rooms
 handle_call({do, close_all_rooms}, _From, State) ->
   NewState = State#state{rooms = []},
 

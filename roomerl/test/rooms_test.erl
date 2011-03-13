@@ -28,6 +28,9 @@ describe_test_() ->
           {"should list all open rooms",
             fun should_list_all_open_rooms/0},
 
+          {"should know whether a room is open or no",
+            fun should_know_whether_a_room_is_open_or_no/0},
+
           {"should close all open rooms",
             fun should_close_all_open_rooms/0}
         ]},
@@ -74,6 +77,18 @@ should_list_all_open_rooms() ->
   
   ?assertMatch(["123", "456", "789"], rooms:get_open_rooms()).
 
+should_know_whether_a_room_is_open_or_no() ->
+  ensure_there_is_no_room(),
+
+  rooms:open_room("123"),
+  rooms:open_room("456"),
+  rooms:open_room("789"),
+
+  ?assertMatch(yes, rooms:is_open_room("123")),
+  ?assertMatch(yes, rooms:is_open_room("456")),
+  ?assertMatch(yes, rooms:is_open_room("789")),
+  ?assertMatch(no, rooms:is_open_room("000")).
+    
 should_close_all_open_rooms() ->
   ensure_there_is_no_room(),
 
@@ -83,7 +98,7 @@ should_close_all_open_rooms() ->
 
   ?assertMatch([], rooms:close_all_rooms()),
   ?assertMatch([], rooms:get_open_rooms()).
-
+  
 %%
 %% Helper functions -------------------------------------------------------------------------------
 %%
