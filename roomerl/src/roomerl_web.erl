@@ -160,7 +160,7 @@ handle_http(Req) ->
   Resource = Req:resource([lowercase, urldecode]),
 
   case get_handler(Resource) of
-    {external, Handler} ->
+    {custom, Handler} ->
       Handler:handle_http(Method, Resource, Req);
     {_, _} ->
       handle_http(Method, Resource, Req)
@@ -171,7 +171,7 @@ handle_websocket(Ws) ->
   Path = string:tokens(Ws:get(path), "/"),
   
   case get_handler(Path) of
-    {external, Handler} ->
+    {custom, Handler} ->
       Handler:handle_websocket(Path, Ws);
     {_, _} ->
       handle_websocket(Path, Ws)
@@ -183,14 +183,14 @@ handle_websocket(Ws) ->
 
 % get web handler
 get_handler([]) ->
-  {internal, ?MODULE};
+  {default, ?MODULE};
   
 get_handler(Uri) ->
   [Resource | _] = Uri,
   HandlerName = list_to_atom(Resource ++ "_web_handler"),
 
   try HandlerName:new(get_docroot()) of
-    Handler -> {external, Handler}
+    Handler -> {custom, Handler}
   catch
     error:_ -> {not_found, HandlerName}
   end.  
