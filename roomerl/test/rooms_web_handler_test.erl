@@ -91,7 +91,7 @@ should_accept_get_to_show_the_profile_page_of_a_room() ->
                      "This is the 123 room page."}}, HttpResponse).
   
 should_accept_get_to_enter_in_a_room() ->
-  HttpResponse = http_get("/rooms/123/getin"),
+  HttpResponse = http_get("/rooms/123/enter"),
   
   ?assertMatch({ok, {{"HTTP/1.1", 200, "OK"},
                      [{"connection", "Keep-Alive"},

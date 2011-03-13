@@ -25,7 +25,7 @@ handle_http('GET', ["rooms", RoomId], Req) ->
   Req:ok([{"Content-Type", "text/plain"}], "This is the ~s room page.", [RoomId]);
 
 % handle a GET on /rooms/{RoomId}/getin
-handle_http('GET', ["rooms", _RoomId, "getin"], Req) ->
+handle_http('GET', ["rooms", _RoomId, "enter"], Req) ->
   Req:file(path_to_doc("room.html"));
 
 % handle a GET on /rooms/{RoomId}/users
