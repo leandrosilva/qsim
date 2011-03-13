@@ -7,7 +7,7 @@
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -export([start/0, stop/0, upgrade/0]).
--export([get_basedir/0, get_host/0, get_port/0, get_backlog/0, get_docroot/0]).
+-export([get_basedir/0, get_web_config/0]).
 
 %%
 %% Admin API --------------------------------------------------------------------------------------
@@ -40,33 +40,17 @@ get_basedir() ->
   {file, Here} = code:is_loaded(?MODULE),
   filename:dirname(filename:dirname(Here)).
 
-%% @spec get_host() -> string()
-%% @doc The roomerl server IP.
-get_host() ->
-  get_env(host).
-
-%% @spec get_port() -> int()
-%% @doc The roomerl server HTTP port.
-get_port() ->
-  get_env(port).
-
-%% @spec get_backlog() -> int()
-%% @doc The maximum length that the queue of pending connections to roomerl
-%%      server may grow to.
-get_backlog() ->
-  get_env(backlog).
-
-%% @spec get_docroot() -> string()
-%% @doc The relative path to documents in the roomerl server.
-get_docroot() ->
-  get_env(docroot).  
+%% @spec get_web_config() -> string()
+%% @doc The roomerl web server configuration.
+get_web_config() ->
+  get_env(web).
 
 %%
 %% Internal API -----------------------------------------------------------------------------------
 %%
 
 %% @spec get_env(Name) -> Val | undefined
-%% @doc Get an configuration parameter of this application.
+%% @doc Get a configuration parameter of this application.
 get_env(Name) ->
   case application:get_env(?MODULE, Name) of
     {ok, Value} ->

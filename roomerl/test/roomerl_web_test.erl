@@ -114,7 +114,9 @@ should_accept_get_to_show_the_users_page_of_a_room() ->
 %%
 
 should_accept_connections_in_a_room() ->
-  started = websocket_client_impl:start(roomerl:get_host(), roomerl:get_port(), "/rooms/123"),
+  [{host, Host}, {port, Port}, _, _] = roomerl:get_web_config(),
+   
+  started = websocket_client_impl:start(Host, Port, "/rooms/123"),
   
   {sent, "message 1"} = websocket_client_impl:send("message 1"),
   wait_one_seconds(),

@@ -13,8 +13,8 @@
   ]},
   {registered, []},
   {mod, {roomerl_app, []}},
-  {env, [{host, "0.0.0.0"},
-         {port, 8080},
-         {backlog, 128},
-         {docroot, "priv/www"}]},
+  {env, [{web, [{host, "0.0.0.0"},
+                {port, 8080},
+                {backlog, 128},
+                {docroot, "priv/www"}]}]},
   {applications, [kernel, stdlib]}]}.

@@ -9,10 +9,15 @@
 %%
 
 % start misultin http server
-start(_Options) ->
-	misultin:start_link([{host, roomerl:get_host()},
-	                     {port, roomerl:get_port()},
-	                     {backlog, roomerl:get_backlog()},
+start(Options) ->
+  [{host, Host},
+   {port, Port},
+   {backlog, BackLog},
+   {docroot, _DocRoot}] = Options,
+  
+	misultin:start_link([{host, Host},
+	                     {port, Port},
+	                     {backlog, BackLog},
 	                     {loop, fun(Req) -> handle_http(Req) end},
                        {ws_loop, fun(Ws) -> handle_websocket(Ws) end},
                        {ws_autoexit, false}]).
@@ -92,4 +97,5 @@ handle_websocket(["rooms", RoomId], Ws) ->
 %%
 
 path_to_doc(File) ->
-  roomerl:get_docroot() ++ "/" ++ File.
+  [_, _, _, {docroot, DocRoot}] = roomerl:get_web_config(),
+  DocRoot ++ "/" ++ File.

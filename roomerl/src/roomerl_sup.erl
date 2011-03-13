@@ -45,10 +45,8 @@ upgrade() ->
 %% @spec init([]) -> SupervisorTree
 %% @doc supervisor callback.
 init([]) ->
-  WebConfig = [],
-  Web = {roomerl_web,
-         {roomerl_web, start, [WebConfig]},
-         permanent, 5000, worker, dynamic},
+  WebConfig = roomerl:get_web_config(),
+  Web = {roomerl_web, {roomerl_web, start, [WebConfig]}, permanent, 5000, worker, dynamic},
 
   Processes = [Web],
   {ok, {{one_for_one, 10, 10}, Processes}}.
