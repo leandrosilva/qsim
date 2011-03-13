@@ -15,7 +15,7 @@ start_link(Options) ->
    {backlog, BackLog},
    {docroot, _DocRoot}] = Options,
   
-	misultin:start_link([{host, Host},
+	misultin:start_link([{ip, Host},
 	                     {port, Port},
 	                     {backlog, BackLog},
 	                     {loop, fun(Req) -> handle_http(Req) end},
