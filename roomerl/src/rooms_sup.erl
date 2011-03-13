@@ -31,7 +31,13 @@ upgrade() ->
 %% Supervisor Callback ----------------------------------------------------------------------------
 %%
 
-%% @spec init([]) -> SupervisorTree = {ok, {{RestartStrategy, MaxR, MaxT}, [ChildSpec]}} | ignore
+%% @spec init([]) -> SupervisorTree = {ok, {SupervisorSpec, [ChildSpec]}} | ignore
+%%
+%% Types:
+%%
+%%     SupervisorSpec = {RestartStrategy, AllowedRestarts, MaxSeconds}
+%%     ChildSpec = {Id, {Module, Function, Arguments}, Restart, Shutdown, Type, ModuleList}
+%%
 %% @doc supervisor callback.
 init([]) ->
   RoomsConfig = [],
