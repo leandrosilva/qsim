@@ -2,14 +2,14 @@
 %% @copyright 2011 Leandro Silva.
 
 -module(roomerl_web).
--export([start/1, stop/0]).
+-export([start_link/1, stop/0]).
 
 %%
 %% Admin API --------------------------------------------------------------------------------------
 %%
 
 % start misultin http server
-start(Options) ->
+start_link(Options) ->
   [{host, Host},
    {port, Port},
    {backlog, BackLog},
