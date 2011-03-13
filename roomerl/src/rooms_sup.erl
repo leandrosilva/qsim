@@ -1,7 +1,7 @@
 %% @author Leandro Silva <leandrodoze@gmail.com>
 %% @copyright 2011 Leandro Silva.
 
-%% @doc Supervisor for the rooms of the roomerl application.
+%% @doc Supervisor for rooms of the roomerl application.
 
 -module(rooms_sup).
 -author('Leandro Silva <leandrodoze@gmail.com>').
@@ -34,7 +34,7 @@ upgrade() ->
 %% @spec init([]) -> SupervisorTree = {ok, {{RestartStrategy, MaxR, MaxT}, [ChildSpec]}} | ignore
 %% @doc supervisor callback.
 init([]) ->
-  RoomsConfig = roomerl:get_web_config(),
+  RoomsConfig = [],
   Rooms = {rooms, {rooms, start_link, [RoomsConfig]}, permanent, 5000, worker, dynamic},
 
   Processes = [Rooms],

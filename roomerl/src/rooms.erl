@@ -38,7 +38,7 @@ stop() ->
 %% @spec get_rooms() -> [Room]
 %% @doc Rooms current up rooms.
 get_rooms() ->
-  gen_server:call(?MODULE, get_rooms).
+  gen_server:call(?MODULE, {get, rooms}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
@@ -58,7 +58,7 @@ init(_Options) ->
 %% @doc Handling call messages.
 
 % return host property
-handle_call(get_rooms, _From, State) ->
+handle_call({get, rooms}, _From, State) ->
   {reply, State#state.rooms, State};
 
 % handle_call generic fallback
