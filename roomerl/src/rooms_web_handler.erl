@@ -24,7 +24,15 @@ handle_http('GET', ["rooms"], Req) ->
 handle_http('GET', ["rooms", RoomId], Req) ->
   Req:ok([{"Content-Type", "text/plain"}], "This is the ~s room page.", [RoomId]);
 
-% handle a GET on /rooms/{RoomId}/getin
+% handle a GET on /rooms/{RoomId}/open
+handle_http('GET', ["rooms", RoomId, "open"], Req) ->
+  Req:ok([{"Content-Type", "text/plain"}], "Opening room ~s.", [RoomId]);
+
+% handle a GET on /rooms/{RoomId}/close
+handle_http('GET', ["rooms", RoomId, "close"], Req) ->
+  Req:ok([{"Content-Type", "text/plain"}], "Closing room ~s.", [RoomId]);
+
+% handle a GET on /rooms/{RoomId}/enter
 handle_http('GET', ["rooms", _RoomId, "enter"], Req) ->
   Req:file(path_to_doc("room.html"));
 
