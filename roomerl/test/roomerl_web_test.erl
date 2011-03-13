@@ -11,8 +11,8 @@
 %%
 %% Describing roomerl_web module ------------------------------------------------------------------
 %%
-describe_roomerl_test_() ->
-  {"roomerl",
+describe_test_() ->
+  {"roomerl_web",
     [
       {"before all tests",
         {setup, fun before_all/0, []}},

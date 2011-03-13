@@ -11,7 +11,7 @@
 %%
 %% Describing roomerl module ----------------------------------------------------------------------
 %%
-describe_roomerl_test_() ->
+describe_test_() ->
   {"roomerl",
     [
       {"before all tests",

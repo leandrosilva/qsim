@@ -11,7 +11,7 @@
 % admin api
 -export([start_link/1, stop/0]).
 % public api
--export([get_rooms/0]).
+-export([open_room/1, close_room/1, get_open_rooms/0]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
@@ -21,10 +21,10 @@
 %% Admin API --------------------------------------------------------------------------------------
 %%
 
-%% @spec start_link(Options) -> {ok, Pid} | ignore | {error, Error}
+%% @spec start_link(_Options) -> {ok, Pid} | ignore | {error, Error}
 %% @doc Start rooms manager.
-start_link(Options) ->
-  gen_server:start_link({local, ?MODULE}, ?MODULE, Options, []).
+start_link(_Options) ->
+  gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 %% @spec stop() -> ok
 %% @doc Manually stops the server.
@@ -35,10 +35,20 @@ stop() ->
 %% Public API -------------------------------------------------------------------------------------
 %%
 
-%% @spec get_rooms() -> [Room]
-%% @doc Rooms current up rooms.
-get_rooms() ->
-  gen_server:call(?MODULE, {get, rooms}).
+%% @spec open_room(RoomId) -> [Room]
+%% @doc Opens a room given.
+open_room(RoomId) ->
+  gen_server:call(?MODULE, {open_room, RoomId}).
+
+%% @spec close_room(RoomId) -> [Room]
+%% @doc Closes a room given.
+close_room(RoomId) ->
+  gen_server:call(?MODULE, {close_room, RoomId}).
+
+%% @spec get_open_rooms() -> [Room]
+%% @doc Currently open rooms.
+get_open_rooms() ->
+  gen_server:call(?MODULE, {get, open_rooms}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
@@ -57,8 +67,22 @@ init(_Options) ->
 %%                  {noreply, State, Timeout} | {stop, Reason, Reply, State} | {stop, Reason, State}
 %% @doc Handling call messages.
 
-% return host property
-handle_call({get, rooms}, _From, State) ->
+% opens a room given
+handle_call({open_room, RoomId}, _From, State) ->
+  OpenRooms = [RoomId | State#state.rooms],
+  NewState = State#state{rooms = OpenRooms},
+  
+  {reply, OpenRooms, NewState};
+
+% opens a room given
+handle_call({close_room, RoomId}, _From, State) ->
+  OpenRooms = lists:delete(RoomId, State#state.rooms),
+  NewState = State#state{rooms = OpenRooms},
+  
+  {reply, OpenRooms, NewState};
+
+% return currently open rooms
+handle_call({get, open_rooms}, _From, State) ->
   {reply, State#state.rooms, State};
 
 % handle_call generic fallback
