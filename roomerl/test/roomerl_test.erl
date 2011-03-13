@@ -2,7 +2,6 @@
 %% @copyright 2011 Leandro Silva.
 
 %% @doc Functional test module for roomerl.
-%%      The reference module is roomerl. It's the main module.
 
 -module(roomerl_test).
 -author('Leandro Silva <leandrodoze@gmail.com>').

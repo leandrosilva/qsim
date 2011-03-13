@@ -11,6 +11,8 @@
     roomerl_web,
     roomerl_deps,
     rooms_sup,
+    rooms_web_handler,
+    rooms,
     supervisor_utility
   ]},
   {registered, []},

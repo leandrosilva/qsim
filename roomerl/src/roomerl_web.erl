@@ -154,71 +154,59 @@ code_change(_OldVsn, State, _Extra) ->
 %% Misultin Callbacks -----------------------------------------------------------------------------
 %%
 
-% callback on request received
+% callback on HTTP request received
 handle_http(Req) ->
-  % dispatch to routes
   Method = Req:get(method),
   Resource = Req:resource([lowercase, urldecode]),
-  handle(Method, Resource, Req).
-  
+
+  case get_handler(Resource) of
+    {external, Handler} ->
+      Handler:handle_http(Method, Resource, Req);
+    {_, _} ->
+      handle_http(Method, Resource, Req)
+  end.
+
 % callback on received websockets data
 handle_websocket(Ws) ->
-  % dispatch to routes
   Path = string:tokens(Ws:get(path), "/"),
-  handle_websocket(Path, Ws).
-
-% --- HTTP Routes to support handle_http callback -------------------------------------------------
-
-% handle a GET on /
-handle('GET', [], Req) ->
-  Req:ok([{"Content-Type", "text/plain"}], "qsin:roomerl");
-
-% handle a GET on /rooms
-handle('GET', ["rooms"], Req) ->
-  Req:ok([{"Content-Type", "text/plain"}], "The Rooms page.");
-
-% handle a GET on /rooms/{RoomId}
-handle('GET', ["rooms", RoomId], Req) ->
-  Req:ok([{"Content-Type", "text/plain"}], "This is the ~s room page.", [RoomId]);
-
-% handle a GET on /rooms/{RoomId}/getin
-handle('GET', ["rooms", _RoomId, "getin"], Req) ->
-  Req:file(path_to_doc("room.html"));
-
-% handle a GET on /rooms/{RoomId}/users
-handle('GET', ["rooms", RoomId, "users"], Req) ->
-  Req:ok([{"Content-Type", "text/plain"}], "This is ~s's users page.", [RoomId]);
-
-% handle the 404 page not found
-handle(_, _, Req) ->
-  Req:ok([{"Content-Type", "text/plain"}], "Page not found.").
-
-% --- WebSockets Routes to support handle_websocket callback --------------------------------------
-
-% handle /chat PATH
-handle_websocket(["rooms", RoomId], Ws) ->
-  receive
-    {browser, Data} ->
-      % io:format("[websocket_handler = ~w, RoomId = ~p] received ~p~n", [self(), RoomId, Data]),
-
-      Ws:send(["received '", Data, "'"]),
-      handle_websocket(["rooms", RoomId], Ws);
-    closed ->
-      % io:format("[websocket_handler = ~w, RoomId = ~p] The WebSocket was CLOSED!~n", [self(), RoomId]),
-
-      closed;
-    _Ignore ->
-      handle_websocket(["rooms", RoomId], Ws)
-  after 5000 ->
-    % io:format("[websocket_handler = ~p, RoomId = ~p] pushing~n", [self(), RoomId]),
-
-    Ws:send("pushing!"),
-    handle_websocket(["rooms", RoomId], Ws)
+  
+  case get_handler(Path) of
+    {external, Handler} ->
+      Handler:handle_websocket(Path, Ws);
+    {_, _} ->
+      handle_websocket(Path, Ws)
   end.
 
 %%
 %% Internal API -----------------------------------------------------------------------------------
 %%
 
-path_to_doc(File) ->
-  get_docroot() ++ "/" ++ File.
+% get web handler
+get_handler([]) ->
+  {internal, ?MODULE};
+  
+get_handler(Uri) ->
+  [Resource | _] = Uri,
+  HandlerName = list_to_atom(Resource ++ "_web_handler"),
+
+  try HandlerName:new(get_docroot()) of
+    Handler -> {external, Handler}
+  catch
+    error:_ -> {not_found, HandlerName}
+  end.  
+
+% --- HTTP Routes to support handle_http callback -------------------------------------------------
+
+% handle a GET on /
+handle_http('GET', [], Req) ->
+  Req:ok([{"Content-Type", "text/plain"}], "qsin:roomerl");
+
+% handle the 404 page not found
+handle_http(_, _, Req) ->
+  Req:respond(404, [{"Content-Type", "text/plain"}], "Page not found.").
+
+% --- WebSockets Routes to support handle_websocket callback --------------------------------------
+
+% handle any PATH
+handle_websocket(_, _Ws) ->
+  ok.
