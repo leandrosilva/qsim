@@ -19,8 +19,13 @@ run_test: compile_test
 	@erl -noshell -pa ebin/ deps/**/ebin/ -s $(APP_NAME) -run $(MODULE) test -run init stop -config config/test
 
 run_all_test: compile_test
-	@for module in $(MODULES); do \
+	@for fullfilename in `find ./test -name "*_test.erl"`; do \
+		filename=$$(basename $$fullfilename); \
+		module=$${filename%%.*}; \
+		echo ; \
+		echo running: $$module; \
 		erl -noshell -pa ebin/ deps/**/ebin/ -s $(APP_NAME) -run $$module test -run init stop -config config/test; \
+		echo ; \
 	done
 
 clear:
