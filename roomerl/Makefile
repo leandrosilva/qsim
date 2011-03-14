@@ -18,6 +18,11 @@ run_dev:
 run_test: compile_test
 	@erl -noshell -pa ebin/ deps/**/ebin/ -s $(APP_NAME) -run $(MODULE) test -run init stop -config config/test
 
+run_all_test: compile_test
+	@for module in $(MODULES); do \
+		erl -noshell -pa ebin/ deps/**/ebin/ -s $(APP_NAME) -run $$module test -run init stop -config config/test; \
+	done
+
 clear:
 	@rm -f ebin/*.beam
 	@rm -f erl_crash.dump
