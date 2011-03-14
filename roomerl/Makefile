@@ -25,7 +25,6 @@ run_all_tests: compile_test
 		echo ; \
 		echo running: $$module; \
 		erl -noshell -pa ebin/ deps/**/ebin/ -s $(APP_NAME) -run $$module test -run init stop -config config/test; \
-		echo ; \
 	done
 
 clear:
