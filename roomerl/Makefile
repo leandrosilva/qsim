@@ -18,7 +18,7 @@ run_dev:
 run_test: compile_test
 	@erl -noshell -pa ebin/ deps/**/ebin/ -s $(APP_NAME) -run $(MODULE) test -run init stop -config config/test
 
-run_all_test: compile_test
+run_all_tests: compile_test
 	@for fullfilename in `find ./test -name "*_test.erl"`; do \
 		filename=$$(basename $$fullfilename); \
 		module=$${filename%%.*}; \
