@@ -56,16 +56,16 @@ after_all() ->
 should_open_a_room_given() ->
   ensure_there_is_no_room(),
   
-  ?assertMatch(["123"], rooms:open_room("123")),
+  ?assertMatch({ok, "123"}, rooms:open_room("123")),
   ?assertMatch(["123"], rooms:get_open_rooms()).
 
 should_close_a_room_given() ->
   ensure_there_is_no_room(),
   
-  ?assertMatch(["123"], rooms:open_room("123")),
-  ?assertMatch(["123", "456"], rooms:open_room("456")),
+  ?assertMatch({ok, "123"}, rooms:open_room("123")),
+  ?assertMatch({ok, "456"}, rooms:open_room("456")),
   
-  ?assertMatch(["456"], rooms:close_room("123")),
+  ?assertMatch({ok, "123"}, rooms:close_room("123")),
   ?assertMatch(["456"], rooms:get_open_rooms()).
 
 should_list_all_open_rooms() ->

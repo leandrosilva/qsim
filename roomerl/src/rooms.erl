@@ -35,12 +35,12 @@ stop() ->
 %% Public API -------------------------------------------------------------------------------------
 %%
 
-%% @spec open_room(RoomId) -> [Room]
+%% @spec open_room(RoomId) -> {ok, RoomId}
 %% @doc Opens a room given.
 open_room(RoomId) ->
   gen_server:call(?MODULE, {do, open_room, RoomId}).
 
-%% @spec close_room(RoomId) -> [Room]
+%% @spec close_room(RoomId) -> {ok, RoomId}
 %% @doc Closes a room given.
 close_room(RoomId) ->
   gen_server:call(?MODULE, {do, close_room, RoomId}).
@@ -82,14 +82,14 @@ handle_call({do, open_room, RoomId}, _From, State) ->
   OpenRooms = lists:reverse([RoomId | lists:reverse(State#state.rooms)]),
   NewState = State#state{rooms = OpenRooms},
   
-  {reply, OpenRooms, NewState};
+  {reply, {ok, RoomId}, NewState};
 
 % opens a room given
 handle_call({do, close_room, RoomId}, _From, State) ->
   OpenRooms = lists:delete(RoomId, State#state.rooms),
   NewState = State#state{rooms = OpenRooms},
   
-  {reply, OpenRooms, NewState};
+  {reply, {ok, RoomId}, NewState};
 
 % return currently open rooms
 handle_call({get, open_rooms}, _From, State) ->

@@ -26,10 +26,12 @@ handle_http('GET', ["rooms", RoomId], Req) ->
 
 % handle a GET on /rooms/{RoomId}/open
 handle_http('GET', ["rooms", RoomId, "open"], Req) ->
+  rooms:open_room(RoomId),
   Req:ok([{"Content-Type", "text/plain"}], "Opening room ~s.", [RoomId]);
 
 % handle a GET on /rooms/{RoomId}/close
 handle_http('GET', ["rooms", RoomId, "close"], Req) ->
+  rooms:close_room(RoomId),
   Req:ok([{"Content-Type", "text/plain"}], "Closing room ~s.", [RoomId]);
 
 % handle a GET on /rooms/{RoomId}/enter
@@ -48,23 +50,28 @@ handle_http(_, _, Req) ->
 
 % handle /chat PATH
 handle_websocket(["rooms", RoomId, "student", StudentId], Ws) ->
-  receive
-    {browser, Data} ->
-      % io:format("[websocket_handler = ~w, RoomId = ~p] received ~p~n", [self(), RoomId, Data]),
+  case rooms:is_open_room(RoomId) of
+    yes ->
+      receive
+        {browser, Data} ->
+          % io:format("[websocket_handler = ~w, RoomId = ~p] received ~p~n", [self(), RoomId, Data]),
 
-      Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] received '", Data, "'"]),
-      handle_websocket(["rooms", RoomId, "student", StudentId], Ws);
-    closed ->
-      % io:format("[websocket_handler = ~w, RoomId = ~p] The WebSocket was CLOSED!~n", [self(), RoomId]),
+          Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] received '", Data, "'"]),
+          handle_websocket(["rooms", RoomId, "student", StudentId], Ws);
+        closed ->
+          % io:format("[websocket_handler = ~w, RoomId = ~p] The WebSocket was CLOSED!~n", [self(), RoomId]),
 
-      closed;
-    _Ignore ->
-      handle_websocket(["rooms", RoomId, "student", StudentId], Ws)
-  after 5000 ->
-    % io:format("[websocket_handler = ~p, RoomId = ~p] pushing~n", [self(), RoomId]),
+          closed;
+        _Ignore ->
+          handle_websocket(["rooms", RoomId, "student", StudentId], Ws)
+      after 5000 ->
+        % io:format("[websocket_handler = ~p, RoomId = ~p] pushing~n", [self(), RoomId]),
 
-    Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] pushing!"]),
-    handle_websocket(["rooms", RoomId, "student", StudentId], Ws)
+        Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] pushing!"]),
+        handle_websocket(["rooms", RoomId, "student", StudentId], Ws)
+      end;
+    no ->
+      Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] this room is closed"])
   end.
 
 %%
