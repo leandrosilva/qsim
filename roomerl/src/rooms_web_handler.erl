@@ -47,13 +47,13 @@ handle_http(_, _, Req) ->
 % --- WebSockets Routes to support handle_websocket callback --------------------------------------
 
 % handle /chat PATH
-handle_websocket(["rooms", RoomId], Ws) ->
+handle_websocket(["rooms", RoomId, "student", StudentId], Ws) ->
   receive
     {browser, Data} ->
       % io:format("[websocket_handler = ~w, RoomId = ~p] received ~p~n", [self(), RoomId, Data]),
 
-      Ws:send(["received '", Data, "'"]),
-      handle_websocket(["rooms", RoomId], Ws);
+      Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] received '", Data, "'"]),
+      handle_websocket(["rooms", RoomId, "student", StudentId], Ws);
     closed ->
       % io:format("[websocket_handler = ~w, RoomId = ~p] The WebSocket was CLOSED!~n", [self(), RoomId]),
 
@@ -63,8 +63,8 @@ handle_websocket(["rooms", RoomId], Ws) ->
   after 5000 ->
     % io:format("[websocket_handler = ~p, RoomId = ~p] pushing~n", [self(), RoomId]),
 
-    Ws:send("pushing!"),
-    handle_websocket(["rooms", RoomId], Ws)
+    Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] pushing!"]),
+    handle_websocket(["rooms", RoomId, "student", StudentId], Ws)
   end.
 
 %%

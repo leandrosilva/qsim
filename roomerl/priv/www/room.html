@@ -7,10 +7,10 @@
 				document.getElementById('status').innerHTML = document.getElementById('status').innerHTML + date + ": " + text + "<br>";				
 			}
 			var ws;
-			function connect(){
+			function connect(student){
 				if ("WebSocket" in window) {
 					// browser supports websockets
-					ws = new WebSocket("ws://localhost:8080/rooms/123");
+					ws = new WebSocket("ws://localhost:8080/rooms/123/student/" + student);
 					ws.onopen = function() {
 						// websocket is connected
 						addStatus("websocket connected!");
@@ -39,9 +39,11 @@
 	</head>
 	<body>
 	  <form method="POST">
-	    <input type="submit" value="connect" onclick="connect(); return false;"/>
+	    Student ID: <input type="text" name="student"/>
+	    <input type="submit" value="connect" onclick="connect(student.value); return false;"/>
+	    <br/>
+	    Message: <input type="text" name="message"/>
 	    <input type="button" value="send" onclick="send(message.value); return false;"/>
-	    <input type="text" name="message"/>
 	  </form>
 		<div id="status"></div>
 	</body>
