@@ -119,7 +119,7 @@ should_accept_get_to_enter_in_a_room() ->
   
   ?assertMatch({ok, {{"HTTP/1.1", 200, "OK"},
                      [{"connection", "Keep-Alive"},
-                      {"content-length", "1483"},
+                      {"content-length", "1595"},
                       {"content-type", "text/html"}],
                      _HtmlBody}}, HttpResponse).
   
@@ -139,7 +139,7 @@ should_accept_get_to_show_the_users_page_of_a_room() ->
 should_accept_connections_in_a_room() ->
   [{host, Host}, {port, Port}, _, _] = roomerl:get_web_config(),
    
-  started = websocket_client_impl:start(Host, Port, "/rooms/123"),
+  started = websocket_client_impl:start(Host, Port, "/rooms/123/student/1"),
   
   {sent, "message 1"} = websocket_client_impl:send("message 1"),
   wait_one_seconds(),
@@ -152,9 +152,9 @@ should_accept_connections_in_a_room() ->
   
   ?assertMatch([{send, "message 1"},
                 {onopen, ok},
-                {onmessage, "received 'message 1'"},
+                {onmessage, "[RoomId = 123, StudentId = 1] received 'message 1'"},
                 {send, "message 2"},
-                {onmessage, "received 'message 2'"},
+                {onmessage, "[RoomId = 123, StudentId = 1] received 'message 2'"},
                 {close, ok},
                 {onclose, ok}], websocket_client_impl:get_log()).
   
