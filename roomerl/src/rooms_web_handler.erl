@@ -54,19 +54,13 @@ handle_websocket(["rooms", RoomId, "student", StudentId], Ws) ->
     yes ->
       receive
         {browser, Data} ->
-          % io:format("[websocket_handler = ~w, RoomId = ~p] received ~p~n", [self(), RoomId, Data]),
-
           Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] received '", Data, "'"]),
           handle_websocket(["rooms", RoomId, "student", StudentId], Ws);
         closed ->
-          % io:format("[websocket_handler = ~w, RoomId = ~p] The WebSocket was CLOSED!~n", [self(), RoomId]),
-
           closed;
         _Ignore ->
           handle_websocket(["rooms", RoomId, "student", StudentId], Ws)
       after 5000 ->
-        % io:format("[websocket_handler = ~p, RoomId = ~p] pushing~n", [self(), RoomId]),
-
         Ws:send(["[RoomId = ", RoomId, ", StudentId = ", StudentId, "] pushing!"]),
         handle_websocket(["rooms", RoomId, "student", StudentId], Ws)
       end;
