@@ -59,7 +59,7 @@ handle_websocket(["rooms", RoomId, "student", StudentId], Ws) ->
 
       closed;
     _Ignore ->
-      handle_websocket(["rooms", RoomId], Ws)
+      handle_websocket(["rooms", RoomId, "student", StudentId], Ws)
   after 5000 ->
     % io:format("[websocket_handler = ~p, RoomId = ~p] pushing~n", [self(), RoomId]),
 
