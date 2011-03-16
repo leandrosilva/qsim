@@ -9,7 +9,7 @@
 -behaviour(gen_server).
 
 % public api
--export([get_name/1, is_open/1, open/1, close/1, welcome_student/2, goodbye_student/2, is_present_student/2]).
+-export([get_name/1, is_open/1, open/1, close/1, welcome_student/2, goodbye_student/2, has_student/2]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
@@ -65,11 +65,11 @@ goodbye_student(Student, RoomId) ->
   RoomName = get_name(RoomId),
   gen_server:cast(RoomName, {do, goodbye_student, Student}).
 
-%% @spec is_present_student(Student, RoomId) -> yes | no | {error, closed_room} | {error, Error}
+%% @spec has_student(Student, RoomId) -> yes | no | {error, closed_room} | {error, Error}
 %% @doc Verify whether a student given is present.
-is_present_student(Student, RoomId) ->
+has_student(Student, RoomId) ->
   RoomName = get_name(RoomId),
-  gen_server:cast(RoomName, {do, is_present_student, Student}).
+  gen_server:cast(RoomName, {do, has_student, Student}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
@@ -99,7 +99,7 @@ handle_call({do, goodbye_student, _Student}, _From, State) ->
   {reply, _Student, State};
 
 % this student is present here?
-handle_call({do, is_present_student, _Student}, _From, State) ->
+handle_call({do, has_student, _Student}, _From, State) ->
   {reply, yes_or_no, State};
 
 % handle_call generic fallback
