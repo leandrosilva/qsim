@@ -3,7 +3,7 @@
 
 %% @doc The web server module of the roomerl application that handles HTTP and WebSocket.
 
--module(roomerl_web).
+-module(roomerl_web_server).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(gen_server).

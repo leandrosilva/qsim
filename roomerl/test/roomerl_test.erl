@@ -22,8 +22,8 @@ describe_test_() ->
           {"should has get_basedir()",
             fun should_has_get_basedir/0},
               
-          {"should has get_web_config()",
-            fun should_has_get_web_config/0}
+          {"should has get_web_server_config()",
+            fun should_has_get_web_server_config/0}
         ]},
 
       {"after all tests",
@@ -47,8 +47,8 @@ after_all() ->
 should_has_get_basedir() ->
   ?assertMatch("roomerl", lists:last(string:tokens(roomerl:get_basedir(), "/"))).
 
-should_has_get_web_config() ->
+should_has_get_web_server_config() ->
   ?assertMatch([{host, "127.0.0.1"},
                 {port, 8008},
                 {backlog, 111},
-                {docroot, "priv/www"}], roomerl:get_web_config()).
+                {docroot, "priv/www"}], roomerl:get_web_server_config()).

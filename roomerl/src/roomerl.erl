@@ -9,7 +9,7 @@
 % admin api
 -export([start/0, stop/0, upgrade/0]).
 % public api
--export([get_basedir/0, get_web_config/0]).
+-export([get_basedir/0, get_web_server_config/0]).
 
 %%
 %% Admin API --------------------------------------------------------------------------------------
@@ -42,10 +42,10 @@ get_basedir() ->
   {file, Here} = code:is_loaded(?MODULE),
   filename:dirname(filename:dirname(Here)).
 
-%% @spec get_web_config() -> string()
+%% @spec get_web_server_config() -> string()
 %% @doc The roomerl web server configuration.
-get_web_config() ->
-  get_env(web).
+get_web_server_config() ->
+  get_env(web_server).
 
 %%
 %% Internal API -----------------------------------------------------------------------------------

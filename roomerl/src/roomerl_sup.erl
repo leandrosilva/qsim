@@ -40,9 +40,9 @@ upgrade() ->
 %%
 %% @doc supervisor callback.
 init([]) ->
-  WebConfig = roomerl:get_web_config(),
-  Web = {roomerl_web, {roomerl_web, start_link, [WebConfig]}, permanent, 5000, worker, dynamic},
+  WebServerConfig = roomerl:get_web_server_config(),
+  WebServer = {roomerl_web_server, {roomerl_web_server, start_link, [WebServerConfig]}, permanent, 5000, worker, dynamic},
   
   RoomsManagerSup = {rooms_manager_sup, {rooms_manager_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
 
-  {ok, {{one_for_one, 10, 10}, [Web, RoomsManagerSup]}}.
+  {ok, {{one_for_one, 10, 10}, [WebServer, RoomsManagerSup]}}.

@@ -3,7 +3,7 @@
 
 %% @doc Functional test module for roomerl_web.
 
--module(roomerl_web_test).
+-module(roomerl_web_server_test).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -include_lib("eunit/include/eunit.hrl").
@@ -12,7 +12,7 @@
 %% Describing roomerl_web module ------------------------------------------------------------------
 %%
 describe_test_() ->
-  {"roomerl_web",
+  {"roomerl_web_server",
     [
       {"before all tests",
         {setup, fun before_all/0, []}},
@@ -53,13 +53,13 @@ after_all() ->
 %%
 
 should_have_get_host_function() ->
-  ?assertMatch("127.0.0.1", roomerl_web:get_host()).
+  ?assertMatch("127.0.0.1", roomerl_web_server:get_host()).
    
 should_have_get_port_function() ->
-  ?assertMatch(8008, roomerl_web:get_port()).
+  ?assertMatch(8008, roomerl_web_server:get_port()).
 
 should_have_get_backlog_function() ->
-  ?assertMatch(111, roomerl_web:get_backlog()).
+  ?assertMatch(111, roomerl_web_server:get_backlog()).
   
 should_have_get_docroot_function() ->
-  ?assertMatch("priv/www", roomerl_web:get_docroot()).
+  ?assertMatch("priv/www", roomerl_web_server:get_docroot()).
