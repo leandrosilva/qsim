@@ -3,7 +3,7 @@
 
 %% @doc The rooms manager of the roomerl application.
 
--module(rooms).
+-module(rooms_manager).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(gen_server).

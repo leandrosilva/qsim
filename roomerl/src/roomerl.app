@@ -10,9 +10,9 @@
     roomerl_sup,
     roomerl_web,
     roomerl_deps,
-    rooms_sup,
     rooms_web_handler,
-    rooms,
+    rooms_manager_sup,
+    rooms_manager,
     supervisor_utility
   ]},
   {registered, []},

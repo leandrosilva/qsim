@@ -43,6 +43,6 @@ init([]) ->
   WebConfig = roomerl:get_web_config(),
   Web = {roomerl_web, {roomerl_web, start_link, [WebConfig]}, permanent, 5000, worker, dynamic},
   
-  RoomsSup = {rooms_sup, {rooms_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
+  RoomsManagerSup = {rooms_manager_sup, {rooms_manager_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
 
-  {ok, {{one_for_one, 10, 10}, [Web, RoomsSup]}}.
+  {ok, {{one_for_one, 10, 10}, [Web, RoomsManagerSup]}}.

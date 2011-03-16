@@ -26,12 +26,12 @@ handle_http('GET', ["rooms", RoomId], Req) ->
 
 % handle a GET on /rooms/{RoomId}/open
 handle_http('GET', ["rooms", RoomId, "open"], Req) ->
-  {ok, RoomId} = rooms:open_room(RoomId),
+  {ok, RoomId} = rooms_manager:open_room(RoomId),
   Req:ok([{"Content-Type", "text/plain"}], "Opening room ~s.", [RoomId]);
 
 % handle a GET on /rooms/{RoomId}/close
 handle_http('GET', ["rooms", RoomId, "close"], Req) ->
-  {ok, RoomId} = rooms:close_room(RoomId),
+  {ok, RoomId} = rooms_manager:close_room(RoomId),
   Req:ok([{"Content-Type", "text/plain"}], "Closing room ~s.", [RoomId]);
 
 % handle a GET on /rooms/{RoomId}/enter
@@ -50,7 +50,7 @@ handle_http(_, _, Req) ->
 
 % handle /chat PATH
 handle_websocket(["rooms", RoomId, "student", StudentId], Ws) ->
-  case rooms:is_open_room(RoomId) of
+  case rooms_manager:is_open_room(RoomId) of
     yes ->
       receive
         {browser, Data} ->

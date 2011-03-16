@@ -1,9 +1,9 @@
 %% @author Leandro Silva <leandrodoze@gmail.com>
 %% @copyright 2011 Leandro Silva.
 
-%% @doc Supervisor for rooms of the roomerl application.
+%% @doc Supervisor for the rooms manager of the roomerl application.
 
--module(rooms_sup).
+-module(rooms_manager_sup).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(supervisor).
@@ -40,7 +40,7 @@ upgrade() ->
 %%
 %% @doc supervisor callback.
 init([]) ->
-  RoomsConfig = [],
-  Rooms = {rooms, {rooms, start_link, [RoomsConfig]}, permanent, 5000, worker, dynamic},
+  RoomsManagerConfig = [],
+  RoomsManager = {rooms_manager, {rooms_manager, start_link, [RoomsManagerConfig]}, permanent, 5000, worker, dynamic},
 
-  {ok, {{one_for_one, 10, 10}, [Rooms]}}.
+  {ok, {{one_for_one, 10, 10}, [RoomsManager]}}.
