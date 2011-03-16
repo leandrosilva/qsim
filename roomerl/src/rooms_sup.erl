@@ -1,9 +1,9 @@
 %% @author Leandro Silva <leandrodoze@gmail.com>
 %% @copyright 2011 Leandro Silva.
 
-%% @doc Supervisor for the rooms manager of the roomerl application.
+%% @doc Supervisor for the rooms domain of the roomerl application.
 
--module(rooms_manager_sup).
+-module(rooms_sup).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(supervisor).
