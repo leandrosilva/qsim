@@ -43,6 +43,6 @@ init([]) ->
   WebServerConfig = roomerl:get_web_server_config(),
   WebServer = {roomerl_web_server, {roomerl_web_server, start_link, [WebServerConfig]}, permanent, 5000, worker, dynamic},
   
-  RoomsSup = {rooms_sup, {rooms_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
+  RoomsSup = {roomerl_rooms_sup, {roomerl_rooms_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
 
   {ok, {{one_for_one, 10, 10}, [WebServer, RoomsSup]}}.

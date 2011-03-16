@@ -3,7 +3,7 @@
 
 %% @doc Supervisor for the rooms domain of the roomerl application.
 
--module(rooms_sup).
+-module(roomerl_rooms_sup).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(supervisor).
