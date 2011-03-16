@@ -4,7 +4,7 @@
 %% @doc The misultin-based web handler module for handle HTTP and WebSocket requests on the roomerl
 %%      application's rooms.
 
--module(rooms_web_handler, [DocRoot]).
+-module(roomerl_rooms_web_handler, [DocRoot]).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 % misultin web handler callbacks

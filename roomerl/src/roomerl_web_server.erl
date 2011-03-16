@@ -187,7 +187,7 @@ handler_for([]) ->
   
 handler_for(Resource) ->
   [Parent | _] = Resource,
-  HandlerName = list_to_atom(Parent ++ "_web_handler"),
+  HandlerName = list_to_atom("roomerl_" ++ Parent ++ "_web_handler"),
 
   try HandlerName:new(get_docroot()) of
     Handler -> {custom, Handler}
