@@ -9,41 +9,61 @@
 -behaviour(gen_server).
 
 % public api
--export([open/0, close/0, welcome_student/1, goodbye_student/1, is_present_student/1]).
+-export([get_name/0, is_open/0, open/0, close/0, welcome_student/1, goodbye_student/1, is_present_student/1]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--define(ROOM_ID, list_to_atom(?MODULE ++ "_" ++ Id)).
+-define(ROOM_NAME, list_to_atom(atom_to_list(?MODULE) ++ "_" ++ Id)).
+-define(ROOM_MODULE, ?MODULE:new(Id)).
+
 -record(state, {students}).
 
 %%
 %% Public API -------------------------------------------------------------------------------------
 %%
 
+%% @spec get_name() -> atom()
+%% @doc Name of this room.
+get_name() ->
+  ?ROOM_NAME.
+
+%% @spec is_open() -> yes | no
+%% @doc This room is open or no?
+is_open() ->
+  case whereis(?ROOM_NAME) of
+    undefined -> no;
+    _ -> yes
+  end.
+
 %% @spec open() -> {ok, Pid} | ignore | {error, Error}
 %% @doc Opens a room given. It's equivalent to start_link in a typicall gen_server implementation.
 open() ->
-  gen_server:start_link({local, ?ROOM_ID}, ?MODULE, [], []).
+  case gen_server:start_link({local, ?ROOM_NAME}, ?ROOM_MODULE, [], []) of
+    {error, {already_started, Pid}} ->
+      {error, already_open, Pid};
+    Result ->
+      Result
+  end.
 
 %% @spec stop() -> ok
 %% @doc Manually stops the server. It's equivalent to stop in a typicall gen_server implementation.
 close() ->
-  gen_server:cast(?ROOM_ID, stop).
+  gen_server:cast(?ROOM_NAME, stop).
 
 %% @spec welcome_student(Student) -> ok | {error, closed_room} | {error, Error}
 %% @doc Receives a student given.
 welcome_student(Student) ->
-  gen_server:call(?MODULE, {do, welcome_student, Student}).
+  gen_server:call(?ROOM_NAME, {do, welcome_student, Student}).
 
 %% @spec goodbye_student(Student) -> ok | {error, closed_room} | {error, Error}
 %% @doc Say bye-bye to a student given.
 goodbye_student(Student) ->
-  gen_server:call(?MODULE, {do, goodbye_student, Student}).
+  gen_server:call(?ROOM_NAME, {do, goodbye_student, Student}).
 
 %% @spec is_present_student(Student) -> yes | no | {error, closed_room} | {error, Error}
 %% @doc Verify whether a student given is present.
 is_present_student(Student) ->
-  gen_server:call(?MODULE, {do, is_present_student, Student}).
+  gen_server:call(?ROOM_NAME, {do, is_present_student, Student}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
@@ -53,7 +73,7 @@ is_present_student(Student) ->
 %% @doc Initiates the server.
 init(_Options) ->
   process_flag(trap_exit, true),
-  erlang:monitor(process, room),
+  erlang:monitor(process, ?ROOM_NAME),
   
   {ok, #state{students = []}}.
 

@@ -9,7 +9,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 %%
-%% Describing rooms module ----------------------------------------------------------------------
+%% Describing rooms module ------------------------------------------------------------------------
 %%
 describe_test_() ->
   {"rooms",
