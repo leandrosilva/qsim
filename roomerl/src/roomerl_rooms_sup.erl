@@ -41,6 +41,6 @@ upgrade() ->
 %% @doc supervisor callback.
 init([]) ->
   RoomsManagerConfig = [],
-  RoomsManager = {rooms_manager, {rooms_manager, start_link, [RoomsManagerConfig]}, permanent, 5000, worker, dynamic},
+  RoomsManager = {roomerl_rooms_manager, {roomerl_rooms_manager, start_link, [RoomsManagerConfig]}, permanent, 5000, worker, dynamic},
 
   {ok, {{one_for_one, 10, 10}, [RoomsManager]}}.
