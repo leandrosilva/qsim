@@ -69,7 +69,7 @@ goodbye_student(Student, RoomId) ->
 %% @doc Verify whether a student given is present.
 has_student(Student, RoomId) ->
   RoomName = get_name(RoomId),
-  gen_server:cast(RoomName, {do, has_student, Student}).
+  gen_server:cast(RoomName, {get, has_student, Student}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
@@ -99,7 +99,7 @@ handle_call({do, goodbye_student, _Student}, _From, State) ->
   {reply, _Student, State};
 
 % this student is present here?
-handle_call({do, has_student, _Student}, _From, State) ->
+handle_call({get, has_student, _Student}, _From, State) ->
   {reply, yes_or_no, State};
 
 % handle_call generic fallback
