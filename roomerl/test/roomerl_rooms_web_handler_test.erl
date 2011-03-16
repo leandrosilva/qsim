@@ -1,18 +1,18 @@
 %% @author Leandro Silva <leandrodoze@gmail.com>
 %% @copyright 2011 Leandro Silva.
 
-%% @doc Functional test module for rooms_web_handler.
+%% @doc Functional test module for roomerl_rooms_web_handler.
 
--module(rooms_web_handler_test).
+-module(roomerl_rooms_web_handler_test).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -include_lib("eunit/include/eunit.hrl").
 
 %%
-%% Describing rooms_web_handler module ------------------------------------------------------------
+%% Describing roomerl_rooms_web_handler module ------------------------------------------------------------
 %%
 describe_test_() ->
-  {"rooms_web_handler",
+  {"roomerl_rooms_web_handler",
     [
       {"before all tests",
         {setup, fun before_all/0, []}},
