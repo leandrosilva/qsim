@@ -3,79 +3,87 @@
 
 %% @doc The room abstraction for the roomerl application.
 
--module(room, [Id]).
+-module(room).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(gen_server).
 
 % public api
--export([get_name/0, is_open/0, open/0, close/0, welcome_student/1, goodbye_student/1, is_present_student/1]).
+-export([get_name/1, is_open/1, open/1, close/1, welcome_student/2, goodbye_student/2, is_present_student/2]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--define(ROOM_NAME, list_to_atom(atom_to_list(?MODULE) ++ "_" ++ Id)).
--define(ROOM_MODULE, ?MODULE:new(Id)).
-
--record(state, {students}).
+-record(state, {id, name, students}).
 
 %%
 %% Public API -------------------------------------------------------------------------------------
 %%
 
-%% @spec get_name() -> atom()
-%% @doc Name of this room.
-get_name() ->
-  ?ROOM_NAME.
+%% @spec get_name(RoomId) -> atom()
+%% @doc Name of room by its id.
+get_name(RoomId) ->
+  ModuleName = atom_to_list(?MODULE),
+  RoomName = ModuleName ++ "_" ++ RoomId,
+  
+  list_to_atom(RoomName).
 
-%% @spec is_open() -> yes | no
-%% @doc This room is open or no?
-is_open() ->
-  case whereis(?ROOM_NAME) of
+%% @spec is_open(RoomId) -> yes | no
+%% @doc The room is open or no?
+is_open(RoomId) ->
+  case whereis(get_name(RoomId)) of
     undefined -> no;
     _ -> yes
   end.
 
-%% @spec open() -> {ok, Pid} | ignore | {error, Error}
+%% @spec open(RoomId) -> {ok, Pid} | ignore | {error, Error}
 %% @doc Opens a room given. It's equivalent to start_link in a typicall gen_server implementation.
-open() ->
-  case gen_server:start_link({local, ?ROOM_NAME}, ?ROOM_MODULE, [], []) of
+open(RoomId) ->
+  RoomName = get_name(RoomId),
+  
+  case gen_server:start_link({local, RoomName}, ?MODULE, RoomId, []) of
     {error, {already_started, Pid}} ->
       {error, already_open, Pid};
     Result ->
       Result
   end.
 
-%% @spec stop() -> ok
+%% @spec stop(RoomId) -> ok
 %% @doc Manually stops the server. It's equivalent to stop in a typicall gen_server implementation.
-close() ->
-  gen_server:cast(?ROOM_NAME, stop).
+close(RoomId) ->
+  RoomName = get_name(RoomId),
+  gen_server:cast(RoomName, stop).
 
-%% @spec welcome_student(Student) -> ok | {error, closed_room} | {error, Error}
+%% @spec welcome_student(Student, RoomId) -> ok | {error, closed_room} | {error, Error}
 %% @doc Receives a student given.
-welcome_student(Student) ->
-  gen_server:call(?ROOM_NAME, {do, welcome_student, Student}).
+welcome_student(Student, RoomId) ->
+  RoomName = get_name(RoomId),
+  gen_server:cast(RoomName, {do, welcome_student, Student}).
 
-%% @spec goodbye_student(Student) -> ok | {error, closed_room} | {error, Error}
+%% @spec goodbye_student(Student, RoomId) -> ok | {error, closed_room} | {error, Error}
 %% @doc Say bye-bye to a student given.
-goodbye_student(Student) ->
-  gen_server:call(?ROOM_NAME, {do, goodbye_student, Student}).
+goodbye_student(Student, RoomId) ->
+  RoomName = get_name(RoomId),
+  gen_server:cast(RoomName, {do, goodbye_student, Student}).
 
-%% @spec is_present_student(Student) -> yes | no | {error, closed_room} | {error, Error}
+%% @spec is_present_student(Student, RoomId) -> yes | no | {error, closed_room} | {error, Error}
 %% @doc Verify whether a student given is present.
-is_present_student(Student) ->
-  gen_server:call(?ROOM_NAME, {do, is_present_student, Student}).
+is_present_student(Student, RoomId) ->
+  RoomName = get_name(RoomId),
+  gen_server:cast(RoomName, {do, is_present_student, Student}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
 %%
 
-%% @spec init(_Options) -> {ok, State} | {ok, State, Timeout} | ignore | {stop, Reason}
+%% @spec init(RoomId) -> {ok, State} | {ok, State, Timeout} | ignore | {stop, Reason}
 %% @doc Initiates the server.
-init(_Options) ->
-  process_flag(trap_exit, true),
-  erlang:monitor(process, ?ROOM_NAME),
+init(RoomId) ->
+  RoomName = get_name(RoomId),
   
-  {ok, #state{students = []}}.
+  process_flag(trap_exit, true),
+  erlang:monitor(process, RoomName),
+  
+  {ok, #state{id = RoomId, name = RoomName, students = []}}.
 
 %% @spec handle_call(Request, From, State) ->
 %%                  {reply, Reply, State} | {reply, Reply, State, Timeout} | {noreply, State} |
