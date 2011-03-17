@@ -35,7 +35,7 @@ is_open(RoomId) ->
     _ -> yes
   end.
 
-%% @spec open(RoomId) -> {ok, Pid} | ignore | {error, Error}
+%% @spec open(RoomId) -> {ok, Name} | ignore | {error, Error}
 %% @doc Opens a room given. It's equivalent to start_link in a typicall gen_server implementation.
 open(RoomId) ->
   RoomName = get_name(RoomId),
@@ -43,8 +43,8 @@ open(RoomId) ->
   case gen_server:start_link({local, RoomName}, ?MODULE, RoomId, []) of
     {error, {already_started, Pid}} ->
       {error, already_open, Pid};
-    Result ->
-      Result
+    {ok, _Pid} ->
+      {ok, RoomName}
   end.
 
 %% @spec stop(RoomId) -> ok

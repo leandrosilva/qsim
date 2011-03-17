@@ -63,24 +63,24 @@ after_all() ->
 %%
 
 should_have_a_name() ->
-  ?assertMatch(room_123, roomerl_rooms:get_name("123")).
+  ?assertMatch(roomerl_rooms_123, roomerl_rooms:get_name("123")).
 
 should_know_whether_is_open_or_no() ->
   ensure_room_is_close("123"),
   
   ?assertMatch(no, roomerl_rooms:is_open("123")),
-  ?assertMatch({ok, _}, roomerl_rooms:open("123")),
+  ?assertMatch({ok, roomerl_rooms_123}, roomerl_rooms:open("123")),
   ?assertMatch(yes, roomerl_rooms:is_open("123")).
   
 should_can_ben_open() ->
   ensure_room_is_close("123"),
   
-  ?assertMatch({ok, _}, roomerl_rooms:open("123")).
+  ?assertMatch({ok, roomerl_rooms_123}, roomerl_rooms:open("123")).
 
 should_can_be_close() ->
   ensure_room_is_close("123"),
   
-  ?assertMatch({ok, _}, roomerl_rooms:open("123")),
+  ?assertMatch({ok, roomerl_rooms_123}, roomerl_rooms:open("123")),
   ?assertMatch(ok, roomerl_rooms:close("123")).
 
 should_say_welcome_to_a_user() ->
