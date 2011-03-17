@@ -80,6 +80,7 @@ should_can_ben_open() ->
 should_can_be_close() ->
   ensure_room_is_close("123"),
   
+  ?assertMatch({error, unknow_room, "123"}, roomerl_rooms:close("123")),
   ?assertMatch({ok, roomerl_rooms_123}, roomerl_rooms:open("123")),
   ?assertMatch(ok, roomerl_rooms:close("123")).
 

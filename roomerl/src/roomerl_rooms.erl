@@ -54,7 +54,7 @@ close(RoomId) ->
   RoomName = get_name(RoomId),
   case whereis(RoomName) of
     undefined ->
-      {error, unknow_room};
+      {error, unknow_room, RoomId};
     _ ->
       gen_server:cast(RoomName, stop)
   end.
