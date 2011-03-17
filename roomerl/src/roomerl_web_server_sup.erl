@@ -1,9 +1,9 @@
 %% @author Leandro Silva <leandrodoze@gmail.com>
 %% @copyright 2011 Leandro Silva.
 
-%% @doc Supervisor for the roomerl application.
+%% @doc Supervisor for the roomerl_web_server_sup of the roomerl application.
 
--module(roomerl_sup).
+-module(roomerl_web_server_sup).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(supervisor).
@@ -40,7 +40,7 @@ upgrade() ->
 %%
 %% @doc supervisor callback.
 init([]) ->
-  WebServerSup = {roomerl_web_server_sup, {roomerl_web_server_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
-  RoomsSup = {roomerl_rooms_sup, {roomerl_rooms_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
+  WebServerConfig = roomerl:get_web_server_config(),
+  WebServer = {roomerl_web_server, {roomerl_web_server, start_link, [WebServerConfig]}, permanent, 5000, worker, dynamic},
 
-  {ok, {{one_for_one, 10, 10}, [WebServerSup, RoomsSup]}}.
+  {ok, {{one_for_one, 10, 10}, [WebServer]}}.

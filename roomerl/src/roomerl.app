@@ -8,6 +8,7 @@
     roomerl,
     roomerl_app,
     roomerl_sup,
+    roomerl_web_server_sup,
     roomerl_web_server,
     roomerl_deps,
     roomerl_rooms_web_handler,
