@@ -15,6 +15,16 @@
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
+%%
+%% Types ------------------------------------------------------------------------------------------
+%%
+%%     Room = {room, Id, Name}
+%%
+%%         room = atom()
+%%         Id = string()
+%%         Name = string()
+%%
+
 -record(state, {rooms}).
 
 %%
@@ -35,17 +45,17 @@ stop() ->
 %% Public API -------------------------------------------------------------------------------------
 %%
 
-%% @spec open_room(RoomId) -> {ok, RoomId}
+%% @spec open_room(RoomId) -> {ok, Room} | {error, already_open, Pid}
 %% @doc Opens a room given.
 open_room(RoomId) ->
   gen_server:call(?MODULE, {do, open_room, RoomId}).
 
-%% @spec close_room(RoomId) -> {ok, RoomId}
+%% @spec close_room(RoomId) -> {ok, Room}
 %% @doc Closes a room given.
 close_room(RoomId) ->
   gen_server:call(?MODULE, {do, close_room, RoomId}).
 
-%% @spec get_room(RoomId) -> atom()
+%% @spec get_room(RoomId) -> {room, RoomId, RoomName} | unknow
 %% @doc Returns the registered name to a room given.
 get_room(RoomId) ->
   gen_server:call(?MODULE, {get, room, RoomId}).
@@ -84,24 +94,39 @@ init(_Options) ->
 
 % opens a room given
 handle_call({do, open_room, RoomId}, _From, State) ->
-  OpenRooms = lists:reverse([RoomId | lists:reverse(State#state.rooms)]),
+  {ok, _Pid} = roomerl_rooms:open(RoomId),
+  
+  RoomName = roomerl_rooms:get_name(RoomId),
+  Room = {room, RoomId, RoomName},
+  
+  OpenRooms = lists:reverse([Room | lists:reverse(State#state.rooms)]),
   NewState = State#state{rooms = OpenRooms},
   
-  {reply, {ok, RoomId}, NewState};
+  {reply, {ok, Room}, NewState};
 
-% opens a room given
+% closes a room given
 handle_call({do, close_room, RoomId}, _From, State) ->
-  OpenRooms = lists:delete(RoomId, State#state.rooms),
+  RoomName = roomerl_rooms:get_name(RoomId),
+  Room = {room, RoomId, RoomName},
+
+  roomerl_rooms:close(RoomId),
+  
+  OpenRooms = lists:delete(Room, State#state.rooms),
   NewState = State#state{rooms = OpenRooms},
   
-  {reply, {ok, RoomId}, NewState};
+  {reply, {ok, Room}, NewState};
 
 % get a room given
 handle_call({get, room, RoomId}, _From, State) ->
   OpenRooms = State#state.rooms,
 
-  case lists:member(RoomId, OpenRooms) of
-    true -> Name = list_to_atom("room_" ++ RoomId);
+  RoomName = roomerl_rooms:get_name(RoomId),
+  Room = {room, RoomId, RoomName},
+
+  case lists:member(Room, OpenRooms) of
+    true ->
+      RoomName = roomerl_rooms:get_name(RoomId),
+      Name = {room, RoomId, RoomName};
     false -> Name = unknow
   end,
   
@@ -115,7 +140,10 @@ handle_call({get, open_rooms}, _From, State) ->
 handle_call({get, is_open_room, RoomId}, _From, State) ->
   OpenRooms = State#state.rooms,
 
-  case lists:member(RoomId, OpenRooms) of
+  RoomName = roomerl_rooms:get_name(RoomId),
+  Room = {room, RoomId, RoomName},
+
+  case lists:member(Room, OpenRooms) of
     true -> Found = yes;
     false -> Found = no
   end,
@@ -124,6 +152,8 @@ handle_call({get, is_open_room, RoomId}, _From, State) ->
 
 % close all open rooms
 handle_call({do, close_all_rooms}, _From, State) ->
+  [roomerl_rooms:close(RoomId) || {room, RoomId, _} <- State#state.rooms],
+  
   NewState = State#state{rooms = []},
 
   {reply, [], NewState};

@@ -26,12 +26,16 @@ handle_http('GET', ["rooms", RoomId], Req) ->
 
 % handle a GET on /rooms/{RoomId}/open
 handle_http('GET', ["rooms", RoomId, "open"], Req) ->
-  {ok, RoomId} = roomerl_admin:open_room(RoomId),
+  RoomName = roomerl_rooms:get_name(RoomId),
+  
+  {ok, {room, RoomId, RoomName}} = roomerl_admin:open_room(RoomId),
   Req:ok([{"Content-Type", "text/plain"}], "Opening room ~s.", [RoomId]);
 
 % handle a GET on /rooms/{RoomId}/close
 handle_http('GET', ["rooms", RoomId, "close"], Req) ->
-  {ok, RoomId} = roomerl_admin:close_room(RoomId),
+  RoomName = roomerl_rooms:get_name(RoomId),
+  
+  {ok, {room, RoomId, RoomName}} = roomerl_admin:close_room(RoomId),
   Req:ok([{"Content-Type", "text/plain"}], "Closing room ~s.", [RoomId]);
 
 % handle a GET on /rooms/{RoomId}/enter

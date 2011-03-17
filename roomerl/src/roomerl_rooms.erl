@@ -48,7 +48,7 @@ open(RoomId) ->
       {ok, RoomName}
   end.
 
-%% @spec stop(RoomId) -> ok
+%% @spec stop(RoomId) -> ok | {error, unknow_room, RoomId}
 %% @doc Manually stops the server. It's equivalent to stop in a typicall gen_server implementation.
 close(RoomId) ->
   RoomName = get_name(RoomId),

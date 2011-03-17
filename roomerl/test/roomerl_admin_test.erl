@@ -57,38 +57,42 @@ after_all() ->
 %%
 
 should_open_a_room_given() ->
-  ensure_there_is_no_room(),
+  ensure_that_all_rooms_is_close(),
   
-  ?assertMatch({ok, "123"}, roomerl_admin:open_room("123")),
-  ?assertMatch(["123"], roomerl_admin:get_open_rooms()).
+  ?assertMatch({ok, {room, "123", roomerl_rooms_123}}, roomerl_admin:open_room("123")),
+  ?assertMatch([{room, "123", roomerl_rooms_123}], roomerl_admin:get_open_rooms()).
 
 should_close_a_room_given() ->
-  ensure_there_is_no_room(),
+  ensure_that_all_rooms_is_close(),
   
-  ?assertMatch({ok, "123"}, roomerl_admin:open_room("123")),
-  ?assertMatch({ok, "456"}, roomerl_admin:open_room("456")),
+  ?assertMatch({ok, {room, "123", roomerl_rooms_123}}, roomerl_admin:open_room("123")),
+  ?assertMatch({ok, {room, "456", roomerl_rooms_456}}, roomerl_admin:open_room("456")),
   
-  ?assertMatch({ok, "123"}, roomerl_admin:close_room("123")),
-  ?assertMatch(["456"], roomerl_admin:get_open_rooms()).
+  wait_a_moment(),
+  
+  ?assertMatch({ok, {room, "123", roomerl_rooms_123}}, roomerl_admin:close_room("123")),
+  ?assertMatch([{room, "456", roomerl_rooms_456}], roomerl_admin:get_open_rooms()).
 
 should_get_a_room_given() ->
-  ensure_there_is_no_room(),
+  ensure_that_all_rooms_is_close(),
 
   ?assertMatch(unknow, roomerl_admin:get_room("123")),
-  ?assertMatch({ok, "123"}, roomerl_admin:open_room("123")),
-  ?assertMatch(room_123, roomerl_admin:get_room("123")).
+  ?assertMatch({ok, {room, "123", roomerl_rooms_123}}, roomerl_admin:open_room("123")),
+  ?assertMatch({room, "123", roomerl_rooms_123}, roomerl_admin:get_room("123")).
 
 should_list_all_open_rooms() ->
-  ensure_there_is_no_room(),
+  ensure_that_all_rooms_is_close(),
   
   roomerl_admin:open_room("123"),
   roomerl_admin:open_room("456"),
   roomerl_admin:open_room("789"),
   
-  ?assertMatch(["123", "456", "789"], roomerl_admin:get_open_rooms()).
+  ?assertMatch([{room, "123", roomerl_rooms_123},
+                {room, "456", roomerl_rooms_456},
+                {room, "789", roomerl_rooms_789}], roomerl_admin:get_open_rooms()).
 
 should_know_whether_a_room_is_open_or_no() ->
-  ensure_there_is_no_room(),
+  ensure_that_all_rooms_is_close(),
 
   roomerl_admin:open_room("123"),
   roomerl_admin:open_room("456"),
@@ -100,7 +104,7 @@ should_know_whether_a_room_is_open_or_no() ->
   ?assertMatch(no, roomerl_admin:is_open_room("000")).
     
 should_close_all_open_rooms() ->
-  ensure_there_is_no_room(),
+  ensure_that_all_rooms_is_close(),
 
   roomerl_admin:open_room("123"),
   roomerl_admin:open_room("456"),
@@ -113,7 +117,13 @@ should_close_all_open_rooms() ->
 %% Helper functions -------------------------------------------------------------------------------
 %%
 
-ensure_there_is_no_room() ->
+ensure_that_all_rooms_is_close() ->
   ?assertMatch([], roomerl_admin:close_all_rooms()),
   ?assertMatch([], roomerl_admin:get_open_rooms()),
+  
+  wait_a_moment(),
   ok.
+
+wait_a_moment() ->
+  timer:sleep(1).
+  
