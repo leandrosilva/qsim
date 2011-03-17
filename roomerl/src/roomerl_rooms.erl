@@ -9,7 +9,7 @@
 -behaviour(gen_server).
 
 % public api
--export([get_name/1, is_open/1, open/1, close/1, welcome_user/2, goodbye_user/2, has_user/2]).
+-export([get_name/1, is_open/1, open/1, close/1, welcome_user/2, goodbye_user/2, has_user/2, publish_message/3]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
@@ -71,6 +71,12 @@ has_user(User, RoomId) ->
   RoomName = get_name(RoomId),
   gen_server:cast(RoomName, {get, has_user, User}).
 
+%% @spec publish_message(Message, User, RoomId) -> ok | {error, closed_room} | {error, Error}
+%% @doc Send a message from an user to all users in a room given.
+publish_message(Message, User, RoomId) ->
+  RoomName = get_name(RoomId),
+  gen_server:cast(RoomName, {do, publish_message, Message, User}).
+
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
 %%
@@ -100,6 +106,10 @@ handle_call({do, goodbye_user, _User}, _From, State) ->
 
 % this user is present here?
 handle_call({get, has_user, _User}, _From, State) ->
+  {reply, yes_or_no, State};
+
+% publish an message to an room
+handle_call({do, publish_message, _Message, _User}, _From, State) ->
   {reply, yes_or_no, State};
 
 % handle_call generic fallback

@@ -38,7 +38,10 @@ describe_test_() ->
             fun should_say_goodbye_to_a_user/0},
 
           {"should know whether a user is present or no",
-            fun should_know_whether_a_user_is_present_or_no/0}
+            fun should_know_whether_a_user_is_present_or_no/0},
+          
+          {"should publish messages",
+            fun should_publish_messages/0}
         ]},
 
       {"after all tests",
@@ -88,7 +91,10 @@ should_say_goodbye_to_a_user() ->
 
 should_know_whether_a_user_is_present_or_no() ->
   ?assertMatch(yes, no).
-  
+
+should_publish_messages() ->
+  ?assertMatch(yes, no).
+    
 %%
 %% Helper functions -------------------------------------------------------------------------------
 %%
