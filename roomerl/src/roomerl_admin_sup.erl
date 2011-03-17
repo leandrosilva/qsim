@@ -3,7 +3,7 @@
 
 %% @doc Supervisor for the rooms domain of the roomerl application.
 
--module(roomerl_rooms_sup).
+-module(roomerl_admin_sup).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(supervisor).
@@ -41,6 +41,6 @@ upgrade() ->
 %% @doc supervisor callback.
 init([]) ->
   RoomsManagerConfig = [],
-  RoomsManager = {roomerl_rooms_manager, {roomerl_rooms_manager, start_link, [RoomsManagerConfig]}, permanent, 5000, worker, dynamic},
+  RoomsManager = {roomerl_admin, {roomerl_admin, start_link, [RoomsManagerConfig]}, permanent, 5000, worker, dynamic},
 
   {ok, {{one_for_one, 10, 10}, [RoomsManager]}}.

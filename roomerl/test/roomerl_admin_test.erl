@@ -1,9 +1,9 @@
 %% @author Leandro Silva <leandrodoze@gmail.com>
 %% @copyright 2011 Leandro Silva.
 
-%% @doc Functional test module for rooms.
+%% @doc Functional test module for roomerl_admin.
 
--module(roomerl_rooms_manager_test).
+-module(roomerl_admin_test).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -include_lib("eunit/include/eunit.hrl").
@@ -12,7 +12,7 @@
 %% Describing rooms module ------------------------------------------------------------------------
 %%
 describe_test_() ->
-  {"roomerl_rooms_manager",
+  {"roomerl_admin",
     [
       {"before all tests",
         {setup, fun before_all/0, []}},
@@ -59,61 +59,61 @@ after_all() ->
 should_open_a_room_given() ->
   ensure_there_is_no_room(),
   
-  ?assertMatch({ok, "123"}, roomerl_rooms_manager:open_room("123")),
-  ?assertMatch(["123"], roomerl_rooms_manager:get_open_rooms()).
+  ?assertMatch({ok, "123"}, roomerl_admin:open_room("123")),
+  ?assertMatch(["123"], roomerl_admin:get_open_rooms()).
 
 should_close_a_room_given() ->
   ensure_there_is_no_room(),
   
-  ?assertMatch({ok, "123"}, roomerl_rooms_manager:open_room("123")),
-  ?assertMatch({ok, "456"}, roomerl_rooms_manager:open_room("456")),
+  ?assertMatch({ok, "123"}, roomerl_admin:open_room("123")),
+  ?assertMatch({ok, "456"}, roomerl_admin:open_room("456")),
   
-  ?assertMatch({ok, "123"}, roomerl_rooms_manager:close_room("123")),
-  ?assertMatch(["456"], roomerl_rooms_manager:get_open_rooms()).
+  ?assertMatch({ok, "123"}, roomerl_admin:close_room("123")),
+  ?assertMatch(["456"], roomerl_admin:get_open_rooms()).
 
 should_get_a_room_given() ->
   ensure_there_is_no_room(),
 
-  ?assertMatch(unknow, roomerl_rooms_manager:get_room("123")),
-  ?assertMatch({ok, "123"}, roomerl_rooms_manager:open_room("123")),
-  ?assertMatch(room_123, roomerl_rooms_manager:get_room("123")).
+  ?assertMatch(unknow, roomerl_admin:get_room("123")),
+  ?assertMatch({ok, "123"}, roomerl_admin:open_room("123")),
+  ?assertMatch(room_123, roomerl_admin:get_room("123")).
 
 should_list_all_open_rooms() ->
   ensure_there_is_no_room(),
   
-  roomerl_rooms_manager:open_room("123"),
-  roomerl_rooms_manager:open_room("456"),
-  roomerl_rooms_manager:open_room("789"),
+  roomerl_admin:open_room("123"),
+  roomerl_admin:open_room("456"),
+  roomerl_admin:open_room("789"),
   
-  ?assertMatch(["123", "456", "789"], roomerl_rooms_manager:get_open_rooms()).
+  ?assertMatch(["123", "456", "789"], roomerl_admin:get_open_rooms()).
 
 should_know_whether_a_room_is_open_or_no() ->
   ensure_there_is_no_room(),
 
-  roomerl_rooms_manager:open_room("123"),
-  roomerl_rooms_manager:open_room("456"),
-  roomerl_rooms_manager:open_room("789"),
+  roomerl_admin:open_room("123"),
+  roomerl_admin:open_room("456"),
+  roomerl_admin:open_room("789"),
 
-  ?assertMatch(yes, roomerl_rooms_manager:is_open_room("123")),
-  ?assertMatch(yes, roomerl_rooms_manager:is_open_room("456")),
-  ?assertMatch(yes, roomerl_rooms_manager:is_open_room("789")),
-  ?assertMatch(no, roomerl_rooms_manager:is_open_room("000")).
+  ?assertMatch(yes, roomerl_admin:is_open_room("123")),
+  ?assertMatch(yes, roomerl_admin:is_open_room("456")),
+  ?assertMatch(yes, roomerl_admin:is_open_room("789")),
+  ?assertMatch(no, roomerl_admin:is_open_room("000")).
     
 should_close_all_open_rooms() ->
   ensure_there_is_no_room(),
 
-  roomerl_rooms_manager:open_room("123"),
-  roomerl_rooms_manager:open_room("456"),
-  roomerl_rooms_manager:open_room("789"),
+  roomerl_admin:open_room("123"),
+  roomerl_admin:open_room("456"),
+  roomerl_admin:open_room("789"),
 
-  ?assertMatch([], roomerl_rooms_manager:close_all_rooms()),
-  ?assertMatch([], roomerl_rooms_manager:get_open_rooms()).
+  ?assertMatch([], roomerl_admin:close_all_rooms()),
+  ?assertMatch([], roomerl_admin:get_open_rooms()).
   
 %%
 %% Helper functions -------------------------------------------------------------------------------
 %%
 
 ensure_there_is_no_room() ->
-  ?assertMatch([], roomerl_rooms_manager:close_all_rooms()),
-  ?assertMatch([], roomerl_rooms_manager:get_open_rooms()),
+  ?assertMatch([], roomerl_admin:close_all_rooms()),
+  ?assertMatch([], roomerl_admin:get_open_rooms()),
   ok.
