@@ -3,7 +3,7 @@
 
 %% @doc The room abstraction for the roomerl application.
 
--module(roomerl_room).
+-module(roomerl_rooms).
 -author('Leandro Silva <leandrodoze@gmail.com>').
 
 -behaviour(gen_server).
