@@ -8,12 +8,40 @@
 
 -behaviour(gen_server).
 
+% admin api
+-export([is_started/1, start_link/1, stop/1]).
 % public api
--export([get_name/1, is_open/1, open/1, close/1, welcome_user/2, goodbye_user/2, has_user/2, publish_message/3]).
+-export([get_name/1, welcome_user/2, goodbye_user/2, has_user/2, publish_message/3]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 -record(state, {id, name, users}).
+
+%%
+%% Admin API --------------------------------------------------------------------------------------
+%%
+
+%% @spec is_started(RoomId) -> yes | no
+%% @doc The room is started or no?
+is_started(RoomId) ->
+  RoomName = get_name(RoomId),
+  
+  case whereis(RoomName) of
+    undefined -> no;
+    _ -> yes
+  end.
+
+%% @spec start_link(RoomId) -> {ok, Pid} | ignore | {error, Error}
+%% @doc Opens a room given. I mean it starts a gen_server for a room.
+start_link(RoomId) ->
+  RoomName = get_name(RoomId),
+  gen_server:start_link({local, RoomName}, ?MODULE, RoomId, []).
+
+%% @spec stop(RoomId) -> ok
+%% @doc Manually stops the server.
+stop(RoomId) ->
+  RoomName = get_name(RoomId),
+  gen_server:cast(RoomName, stop).
 
 %%
 %% Public API -------------------------------------------------------------------------------------
@@ -24,40 +52,8 @@
 get_name(RoomId) ->
   ModuleName = atom_to_list(?MODULE),
   RoomName = ModuleName ++ "_" ++ RoomId,
-  
+
   list_to_atom(RoomName).
-
-%% @spec is_open(RoomId) -> yes | no
-%% @doc The room is open or no?
-is_open(RoomId) ->
-  RoomName = get_name(RoomId),
-  case whereis(RoomName) of
-    undefined -> no;
-    _ -> yes
-  end.
-
-%% @spec open(RoomId) -> {ok, Name} | ignore | {error, Error}
-%% @doc Opens a room given. It's equivalent to start_link in a typicall gen_server implementation.
-open(RoomId) ->
-  RoomName = get_name(RoomId),
-  
-  case gen_server:start_link({local, RoomName}, ?MODULE, RoomId, []) of
-    {error, {already_started, Pid}} ->
-      {error, already_open, Pid};
-    {ok, _Pid} ->
-      {ok, RoomName}
-  end.
-
-%% @spec stop(RoomId) -> ok | {error, unknow_room, RoomId}
-%% @doc Manually stops the server. It's equivalent to stop in a typicall gen_server implementation.
-close(RoomId) ->
-  RoomName = get_name(RoomId),
-  case whereis(RoomName) of
-    undefined ->
-      {error, unknow_room, RoomId};
-    _ ->
-      gen_server:cast(RoomName, stop)
-  end.
 
 %% @spec welcome_user(User, RoomId) -> ok | {error, closed_room} | {error, Error}
 %% @doc Receives a user given.

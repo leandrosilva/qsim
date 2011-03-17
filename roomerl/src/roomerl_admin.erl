@@ -93,10 +93,8 @@ init(_Options) ->
 
 % opens a room given
 handle_call({do, open_room, RoomId}, _From, State) ->
-  % {done} = needs_to_put_roomerl_rooms_under_its_supervisor,
-  
-  {ok, _Pid} = roomerl_rooms:open(RoomId),
-  
+  roomerl_rooms_sup:start_child(RoomId),
+
   RoomName = roomerl_rooms:get_name(RoomId),
   Room = {room, RoomId, RoomName},
   
@@ -110,7 +108,7 @@ handle_call({do, close_room, RoomId}, _From, State) ->
   RoomName = roomerl_rooms:get_name(RoomId),
   Room = {room, RoomId, RoomName},
 
-  roomerl_rooms:close(RoomId),
+  roomerl_rooms_sup:stop_child(RoomId),
   
   OpenRooms = lists:delete(Room, State#state.rooms),
   NewState = State#state{rooms = OpenRooms},
@@ -153,7 +151,7 @@ handle_call({get, is_open_room, RoomId}, _From, State) ->
 
 % close all open rooms
 handle_call({do, close_all_rooms}, _From, State) ->
-  [roomerl_rooms:close(RoomId) || {room, RoomId, _} <- State#state.rooms],
+  [roomerl_rooms_sup:stop_child(RoomId) || {room, RoomId, _} <- State#state.rooms],
   
   NewState = State#state{rooms = []},
 

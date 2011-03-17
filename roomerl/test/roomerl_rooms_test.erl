@@ -22,14 +22,14 @@ describe_test_() ->
           {"should have a name",
             fun should_have_a_name/0},
 
-          {"should know whether is open or no",
-            fun should_know_whether_is_open_or_no/0},
+          {"should know whether is started or no",
+            fun should_know_whether_is_started_or_no/0},
 
-          {"should can be open",
-            fun should_can_ben_open/0},
+          {"should can be started",
+            fun should_can_ben_started/0},
 
-          {"should can be close",
-            fun should_can_be_close/0},
+          {"should can be stopped",
+            fun should_can_be_stopped/0},
           
           {"should say welcome to a user",
             fun should_say_welcome_to_a_user/0},
@@ -62,27 +62,26 @@ after_all() ->
 %% Scenary: as a room manager ---------------------------------------------------------------------
 %%
 
+should_know_whether_is_started_or_no() ->
+  ensure_room_is_stopped("123"),
+  
+  ?assertMatch(no, roomerl_rooms:is_started("123")),
+  ?assertMatch({ok, _Pid}, roomerl_rooms:start_link("123")),
+  ?assertMatch(yes, roomerl_rooms:is_started("123")).
+
+should_can_ben_started() ->
+  ensure_room_is_stopped("123"),
+  
+  ?assertMatch({ok, _Pid}, roomerl_rooms:start_link("123")).
+
+should_can_be_stopped() ->
+  ensure_room_is_stopped("123"),
+  
+  ?assertMatch({ok, _Pid}, roomerl_rooms:start_link("123")),
+  ?assertMatch(ok, roomerl_rooms:stop("123")).
+
 should_have_a_name() ->
   ?assertMatch(roomerl_rooms_123, roomerl_rooms:get_name("123")).
-
-should_know_whether_is_open_or_no() ->
-  ensure_room_is_close("123"),
-  
-  ?assertMatch(no, roomerl_rooms:is_open("123")),
-  ?assertMatch({ok, roomerl_rooms_123}, roomerl_rooms:open("123")),
-  ?assertMatch(yes, roomerl_rooms:is_open("123")).
-  
-should_can_ben_open() ->
-  ensure_room_is_close("123"),
-  
-  ?assertMatch({ok, roomerl_rooms_123}, roomerl_rooms:open("123")).
-
-should_can_be_close() ->
-  ensure_room_is_close("123"),
-  
-  ?assertMatch({error, unknow_room, "123"}, roomerl_rooms:close("123")),
-  ?assertMatch({ok, roomerl_rooms_123}, roomerl_rooms:open("123")),
-  ?assertMatch(ok, roomerl_rooms:close("123")).
 
 should_say_welcome_to_a_user() ->
   ?assertMatch(yes, no).
@@ -100,8 +99,8 @@ should_publish_messages() ->
 %% Helper functions -------------------------------------------------------------------------------
 %%
 
-ensure_room_is_close(RoomId) ->
-  roomerl_rooms:close(RoomId),
+ensure_room_is_stopped(RoomId) ->
+  roomerl_rooms:stop(RoomId),
   
   timer:sleep(1),
   ok.

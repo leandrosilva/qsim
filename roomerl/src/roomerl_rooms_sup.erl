@@ -10,6 +10,8 @@
 
 % admin api
 -export([start_link/0, upgrade/0]).
+% public api
+-export([start_child/1, stop_child/1]).
 % supervisor callback
 -export([init/1]).
 
@@ -26,6 +28,26 @@ start_link() ->
 %% @doc Remove and add processes if necessary.
 upgrade() ->
   supervisor_utility:upgrade(?MODULE).
+
+%%
+%% Public API -------------------------------------------------------------------------------------
+%%
+
+%% @spec start_child(RoomId) -> {ok, ChildPid} | {ok, ChildPid, Info} | {error, Error}
+%% @dynamic Start a roomerl_rooms process to serve a room given.
+start_child(RoomId) ->
+  RoomName = roomerl_rooms:get_name(RoomId),
+
+  RoomSpec = {RoomName, {roomerl_rooms, start_link, [RoomId]}, permanent, 5000, worker, dynamic},
+  supervisor:start_child(roomerl_rooms_sup, RoomSpec).
+
+%% @spec stop_child(RoomId) -> ok | {error, Error}
+%% @dynamic Stop a roomerl_rooms process to serve a room given.
+stop_child(RoomId) ->
+  RoomName = roomerl_rooms:get_name(RoomId),
+  
+  supervisor:terminate_child(roomerl_rooms_sup, RoomName),
+  supervisor:delete_child(roomerl_rooms_sup, RoomName).
 
 %%
 %% Supervisor Callback ----------------------------------------------------------------------------
