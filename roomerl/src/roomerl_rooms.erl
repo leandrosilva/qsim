@@ -9,11 +9,11 @@
 -behaviour(gen_server).
 
 % public api
--export([get_name/1, is_open/1, open/1, close/1, welcome_student/2, goodbye_student/2, has_student/2]).
+-export([get_name/1, is_open/1, open/1, close/1, welcome_user/2, goodbye_user/2, has_user/2]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--record(state, {id, name, students}).
+-record(state, {id, name, users}).
 
 %%
 %% Public API -------------------------------------------------------------------------------------
@@ -53,23 +53,23 @@ close(RoomId) ->
   RoomName = get_name(RoomId),
   gen_server:cast(RoomName, stop).
 
-%% @spec welcome_student(Student, RoomId) -> ok | {error, closed_room} | {error, Error}
-%% @doc Receives a student given.
-welcome_student(Student, RoomId) ->
+%% @spec welcome_user(User, RoomId) -> ok | {error, closed_room} | {error, Error}
+%% @doc Receives a user given.
+welcome_user(User, RoomId) ->
   RoomName = get_name(RoomId),
-  gen_server:cast(RoomName, {do, welcome_student, Student}).
+  gen_server:cast(RoomName, {do, welcome_user, User}).
 
-%% @spec goodbye_student(Student, RoomId) -> ok | {error, closed_room} | {error, Error}
-%% @doc Say bye-bye to a student given.
-goodbye_student(Student, RoomId) ->
+%% @spec goodbye_user(User, RoomId) -> ok | {error, closed_room} | {error, Error}
+%% @doc Say bye-bye to a user given.
+goodbye_user(User, RoomId) ->
   RoomName = get_name(RoomId),
-  gen_server:cast(RoomName, {do, goodbye_student, Student}).
+  gen_server:cast(RoomName, {do, goodbye_user, User}).
 
-%% @spec has_student(Student, RoomId) -> yes | no | {error, closed_room} | {error, Error}
-%% @doc Verify whether a student given is present.
-has_student(Student, RoomId) ->
+%% @spec has_user(User, RoomId) -> yes | no | {error, closed_room} | {error, Error}
+%% @doc Verify whether a user given is present.
+has_user(User, RoomId) ->
   RoomName = get_name(RoomId),
-  gen_server:cast(RoomName, {get, has_student, Student}).
+  gen_server:cast(RoomName, {get, has_user, User}).
 
 %%
 %% Gen_Server Callbacks ---------------------------------------------------------------------------
@@ -83,23 +83,23 @@ init(RoomId) ->
   process_flag(trap_exit, true),
   erlang:monitor(process, RoomName),
   
-  {ok, #state{id = RoomId, name = RoomName, students = []}}.
+  {ok, #state{id = RoomId, name = RoomName, users = []}}.
 
 %% @spec handle_call(Request, From, State) ->
 %%                  {reply, Reply, State} | {reply, Reply, State, Timeout} | {noreply, State} |
 %%                  {noreply, State, Timeout} | {stop, Reason, Reply, State} | {stop, Reason, State}
 %% @doc Handling call messages.
 
-% say welcome to a student given
-handle_call({do, welcome_student, _Student}, _From, State) ->
-  {reply, _Student, State};
+% say welcome to a user given
+handle_call({do, welcome_user, _User}, _From, State) ->
+  {reply, _User, State};
 
-% say bye-bye to a student given
-handle_call({do, goodbye_student, _Student}, _From, State) ->
-  {reply, _Student, State};
+% say bye-bye to a user given
+handle_call({do, goodbye_user, _User}, _From, State) ->
+  {reply, _User, State};
 
-% this student is present here?
-handle_call({get, has_student, _Student}, _From, State) ->
+% this user is present here?
+handle_call({get, has_user, _User}, _From, State) ->
   {reply, yes_or_no, State};
 
 % handle_call generic fallback

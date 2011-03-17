@@ -31,14 +31,14 @@ describe_test_() ->
           {"should can be close",
             fun should_can_be_close/0},
           
-          {"should say welcome to a student",
-            fun should_say_welcome_to_a_student/0},
+          {"should say welcome to a user",
+            fun should_say_welcome_to_a_user/0},
 
-          {"should say goodbye to a student",
-            fun should_say_goodbye_to_a_student/0},
+          {"should say goodbye to a user",
+            fun should_say_goodbye_to_a_user/0},
 
-          {"should know whether a student is present or no",
-            fun should_know_whether_a_student_is_present_or_no/0}
+          {"should know whether a user is present or no",
+            fun should_know_whether_a_user_is_present_or_no/0}
         ]},
 
       {"after all tests",
@@ -80,13 +80,13 @@ should_can_be_close() ->
   ?assertMatch({ok, _}, roomerl_rooms:open("123")),
   ?assertMatch(ok, roomerl_rooms:close("123")).
 
-should_say_welcome_to_a_student() ->
+should_say_welcome_to_a_user() ->
   ?assertMatch(yes, no).
 
-should_say_goodbye_to_a_student() ->
+should_say_goodbye_to_a_user() ->
   ?assertMatch(yes, no).
 
-should_know_whether_a_student_is_present_or_no() ->
+should_know_whether_a_user_is_present_or_no() ->
   ?assertMatch(yes, no).
   
 %%
