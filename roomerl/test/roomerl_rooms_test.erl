@@ -100,7 +100,7 @@ should_publish_messages() ->
 %%
 
 ensure_room_is_close(RoomId) ->
-  ?assertMatch(ok, roomerl_rooms:close(RoomId)),
+  roomerl_rooms:close(RoomId),
   
   timer:sleep(1),
   ok.

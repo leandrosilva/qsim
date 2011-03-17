@@ -56,7 +56,7 @@ close(RoomId) ->
     undefined ->
       {error, unknow_room};
     _ ->
-      gen_server:cast(RoomName, stop).
+      gen_server:cast(RoomName, stop)
   end.
 
 %% @spec welcome_user(User, RoomId) -> ok | {error, closed_room} | {error, Error}
