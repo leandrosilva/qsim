@@ -13,7 +13,7 @@
     roomerl_rooms_web_handler,
     roomerl_rooms_sup,
     roomerl_rooms_manager,
-    room,
+    roomerl_room,
     supervisor_utility
   ]},
   {registered, []},
