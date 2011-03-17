@@ -30,7 +30,8 @@ get_name(RoomId) ->
 %% @spec is_open(RoomId) -> yes | no
 %% @doc The room is open or no?
 is_open(RoomId) ->
-  case whereis(get_name(RoomId)) of
+  RoomName = get_name(RoomId),
+  case whereis(RoomName) of
     undefined -> no;
     _ -> yes
   end.
@@ -51,7 +52,12 @@ open(RoomId) ->
 %% @doc Manually stops the server. It's equivalent to stop in a typicall gen_server implementation.
 close(RoomId) ->
   RoomName = get_name(RoomId),
-  gen_server:cast(RoomName, stop).
+  case whereis(RoomName) of
+    undefined ->
+      {error, unknow_room};
+    _ ->
+      gen_server:cast(RoomName, stop).
+  end.
 
 %% @spec welcome_user(User, RoomId) -> ok | {error, closed_room} | {error, Error}
 %% @doc Receives a user given.
