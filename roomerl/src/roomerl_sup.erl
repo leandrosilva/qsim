@@ -42,5 +42,6 @@ upgrade() ->
 init([]) ->
   WebServerSup = {roomerl_web_server_sup, {roomerl_web_server_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
   AdminSup = {roomerl_admin_sup, {roomerl_admin_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
+  RoomsSup = {roomerl_rooms_sup, {roomerl_rooms_sup, start_link, []}, permanent, 5000, supervisor, dynamic},
 
-  {ok, {{one_for_one, 10, 10}, [WebServerSup, AdminSup]}}.
+  {ok, {{one_for_one, 10, 10}, [WebServerSup, AdminSup, RoomsSup]}}.
