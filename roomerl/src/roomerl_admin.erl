@@ -83,7 +83,6 @@ close_all_rooms() ->
 %% @doc Initiates the server.
 init(_Options) ->
   process_flag(trap_exit, true),
-  erlang:monitor(process, rooms),
   
   {ok, #state{rooms = []}}.
 
@@ -94,6 +93,8 @@ init(_Options) ->
 
 % opens a room given
 handle_call({do, open_room, RoomId}, _From, State) ->
+  % {done} = needs_to_put_roomerl_rooms_under_its_supervisor,
+  
   {ok, _Pid} = roomerl_rooms:open(RoomId),
   
   RoomName = roomerl_rooms:get_name(RoomId),
@@ -178,11 +179,6 @@ handle_cast(_Msg, State) ->
 %%                  {noreply, State} | {noreply, State, Timeout} | {stop, Reason, State}
 %% @doc Handling all non call/cast messages.
 
-% handle info when misultin server goes down -> take down misultin_gen_server too [the supervisor
-% will take everything up again]
-handle_info({'DOWN', _, _, {misultin, _}, _}, State) ->
-  {stop, normal, State};
-
 % handle_info generic fallback (ignore)
 handle_info(_Info, State) ->
   {noreply, State}.
@@ -191,7 +187,6 @@ handle_info(_Info, State) ->
 %% @doc This function is called by a gen_server when it is about to terminate. When it returns,
 %%      the gen_server terminates with Reason. The return value is ignored.
 terminate(_Reason, _State) ->
-  misultin:stop(),
   terminated.
 
 %% @spec code_change(OldVsn, State, Extra) -> {ok, NewState}

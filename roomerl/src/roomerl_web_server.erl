@@ -131,7 +131,7 @@ handle_cast(_Msg, State) ->
 
 % handle info when misultin server goes down -> take down misultin_gen_server too [the supervisor
 % will take everything up again]
-handle_info({'DOWN', _, _, {misultin, _}, _}, State) ->
+handle_info({'DOWN', _Reference, process, {misultin, _}, _Reason}, State) ->
   {stop, normal, State};
 
 % handle_info generic fallback (ignore)
