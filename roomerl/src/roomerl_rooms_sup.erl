@@ -11,7 +11,7 @@
 % admin api
 -export([start_link/0, upgrade/0]).
 % public api
--export([start_child/1, stop_child/1]).
+-export([start_child/1, stop_child/1, which_children/0]).
 % supervisor callback
 -export([init/1]).
 
