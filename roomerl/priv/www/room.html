@@ -25,6 +25,9 @@
 					ws.onclose = function() {
 						// websocket was closed
 						addStatus("websocket was closed");
+						setTimeout(function(){
+						  connect(student.value);
+						}, 5000);
 					};
 				} else {
 					// browser does not support websockets
